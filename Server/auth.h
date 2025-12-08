@@ -4,10 +4,6 @@
 #ifndef AUTH_H
 #define AUTH_H
 
-// TODO: Định nghĩa cấu trúc User, Session
-// - Đăng ký tài khoản (REGISTER)
-// - Đăng nhập (LOGIN)
-// - Kiểm tra phiên đăng nhập
-// - Đăng xuất
+int authUser(char *userAccount, char *password);
 
 #endif
