@@ -1,19 +1,19 @@
-// commands.h - Xử lý các lệnh của người dùng
-// Gửi các lệnh đến server theo giao thức
+// commands.h - User command handler
+// Send commands to server according to protocol
 
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-// TODO: Định nghĩa các hàm gửi lệnh
-// - REGISTER: Đăng ký tài khoản
-// - LOGIN: Đăng nhập
-// - CREATE_ROOM: Tạo phòng đấu giá
-// - LIST_ROOMS: Liệt kê phòng
-// - JOIN_ROOM: Tham gia phòng
-// - CREATE_ITEM: Tạo vật phẩm đấu giá
-// - DELETE_ITEM: Xóa vật phẩm
-// - LIST_ITEMS: Liệt kê vật phẩm
-// - BID: Đấu giá
-// - BUY: Mua ngay
+// TODO: Define command sending functions
+// - REGISTER: Register account
+// - LOGIN: Login
+// - CREATE_ROOM: Create auction room
+// - LIST_ROOMS: List rooms
+// - JOIN_ROOM: Join room
+// - CREATE_ITEM: Create auction item
+// - DELETE_ITEM: Delete item
+// - LIST_ITEMS: List items
+// - BID: Bid
+// - BUY: Buy now
 
 #endif

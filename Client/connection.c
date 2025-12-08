@@ -1,5 +1,5 @@
-// connection.c - Implementation quản lý kết nối
+// connection.c - Connection management implementation
 
 #include "connection.h"
 
-// TODO: Implement các hàm kết nối
+// TODO: Implement connection functions

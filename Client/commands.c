@@ -1,5 +1,5 @@
-// commands.c - Implementation các lệnh client
+// commands.c - Client commands implementation
 
 #include "commands.h"
 
-// TODO: Implement các hàm gửi lệnh
+// TODO: Implement command sending functions

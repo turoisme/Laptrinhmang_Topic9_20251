@@ -1,14 +1,14 @@
-// database.h - Lưu trữ dữ liệu
-// Quản lý lưu trữ users, rooms, items
+// database.h - Data storage
+// Manage storage for users, rooms, items
 
 #ifndef DATABASE_H
 #define DATABASE_H
 
-// TODO: Định nghĩa cấu trúc lưu trữ
-// - Lưu trữ users (file hoặc memory)
-// - Lưu trữ rooms
-// - Lưu trữ items
-// - Lưu trữ bids history
-// - Các hàm load/save dữ liệu
+// TODO: Define storage structures
+// - Store users (file or memory)
+// - Store rooms
+// - Store items
+// - Store bids history
+// - Load/save data functions
 
 #endif

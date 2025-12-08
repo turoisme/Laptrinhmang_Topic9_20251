@@ -1,16 +1,16 @@
-// item.h - Quản lý vật phẩm đấu giá
-// Tạo, xóa, liệt kê vật phẩm, xử lý đấu giá
+// item.h - Auction item management
+// Create, delete, list items, handle bidding
 
 #ifndef ITEM_H
 #define ITEM_H
 
-// TODO: Định nghĩa cấu trúc Item
-// - Tạo vật phẩm (CREATE_ITEM)
-// - Xóa vật phẩm (DELETE_ITEM)
-// - Liệt kê vật phẩm (LIST_ITEMS)
-// - Đấu giá (BID)
-// - Mua ngay (BUY)
-// - Timer đếm ngược đấu giá (3 phút)
-// - Thông báo cho các client trong phòng
+// TODO: Define Item structure
+// - Create item (CREATE_ITEM)
+// - Delete item (DELETE_ITEM)
+// - List items (LIST_ITEMS)
+// - Bid (BID)
+// - Buy now (BUY)
+// - Auction countdown timer (3 minutes)
+// - Notify clients in room
 
 #endif

@@ -1,5 +1,5 @@
-// auth.c - Implementation xử lý authentication
+// auth.c - Authentication implementation
 
 #include "auth.h"
 
-// TODO: Implement các hàm authentication
+// TODO: Implement authentication functions

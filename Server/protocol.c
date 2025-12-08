@@ -1,5 +1,5 @@
-// protocol.c - Implementation xử lý giao thức
+// protocol.c - Protocol handler implementation
 
 #include "protocol.h"
 
-// TODO: Implement các hàm xử lý giao thức
+// TODO: Implement protocol handler functions

@@ -1,5 +1,5 @@
-// database.c - Implementation quản lý database
+// database.c - Database management implementation
 
 #include "database.h"
 
-// TODO: Implement các hàm quản lý dữ liệu
+// TODO: Implement data management functions

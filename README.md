@@ -27,14 +27,12 @@ Laptrinhmang/
 │   └── thread_pool.h
 │
 ├── Client/                    # Mã nguồn Client
-│   ├── client.c              # Main client
+│   ├── client.c              # Main client (bao gồm I/O terminal)
 │   ├── client.h
 │   ├── connection.c          # Quản lý kết nối
 │   ├── connection.h
 │   ├── commands.c            # Xử lý các lệnh
 │   ├── commands.h
-│   ├── ui.c                  # Giao diện người dùng
-│   ├── ui.h
 │   ├── response_handler.c    # Xử lý response từ server
 │   ├── response_handler.h
 │   ├── notification.c        # Xử lý thông báo real-time
