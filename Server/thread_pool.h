@@ -1,10 +1,10 @@
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 
-// TODO: Define thread pool
-// - Create thread for each client
-// - Manage thread list
-// - Synchronize data between threads
-// - Mutex, semaphore for shared resources
+#include <pthread.h>
+#include "socket_handler.h"
+
+// Client handler thread function
+void *echo(void *arg);
 
 #endif

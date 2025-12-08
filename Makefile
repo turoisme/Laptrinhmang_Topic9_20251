@@ -18,7 +18,7 @@ SERVER_SOURCES = $(SERVER_DIR)/server.c \
                  $(SERVER_DIR)/thread_pool.c
 
 SERVER_OBJECTS = $(SERVER_SOURCES:.c=.o)
-SERVER_TARGET = server
+SERVER_TARGET = auction_server
 
 # Client files
 CLIENT_SOURCES = $(CLIENT_DIR)/client.c \
@@ -28,7 +28,7 @@ CLIENT_SOURCES = $(CLIENT_DIR)/client.c \
                  $(CLIENT_DIR)/notification.c
 
 CLIENT_OBJECTS = $(CLIENT_SOURCES:.c=.o)
-CLIENT_TARGET = client
+CLIENT_TARGET = auction_client
 
 # Targets
 .PHONY: all server client clean
@@ -56,5 +56,6 @@ $(CLIENT_TARGET): $(CLIENT_OBJECTS)
 
 # Clean
 clean:
-	rm -f $(SERVER_OBJECTS) $(CLIENT_OBJECTS) $(SERVER_TARGET) $(CLIENT_TARGET)
+	rm -f $(SERVER_OBJECTS) $(CLIENT_OBJECTS)
+	rm -f $(SERVER_TARGET) $(CLIENT_TARGET)
 	@echo "Cleaned all object files and executables"

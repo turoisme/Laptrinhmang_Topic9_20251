@@ -13,6 +13,8 @@
 #define BUFF_SIZE 4096
 #define DELIMITER "\r\n"
 #define MAX_USERS 100
+#define BACKLOG 20
+#define INET_ADDRSTRLEN 16
 
 // Buffer to process the remaining data after encountering \r\n
 typedef struct {

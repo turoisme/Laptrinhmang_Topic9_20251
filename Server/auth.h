@@ -5,7 +5,7 @@
 #define AUTH_H
 
 char *takeAuthCommand(char* cmd);
-char user[350];
-int verified=0;
+extern char user[350];
+extern int verified;
 
 #endif

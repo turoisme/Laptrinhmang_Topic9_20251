@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include "auth.h"
 
-//Temporary save user info and current verification
+
 char user[350];
-int verified=0;
+int verified = 0;
+//Temporary save user info and current verification
 
 int authUser(char *searchPassword,char *password){
 	//Encrypting argorithm can be done here (if possible)

@@ -31,4 +31,7 @@
 // - Route to appropriate handler
 // - Format response to client
 
+// Main handler for incoming client messages
+void handle_client_message(char *message, int sockfd);
+
 #endif
