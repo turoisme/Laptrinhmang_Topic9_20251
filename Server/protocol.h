@@ -1,10 +1,10 @@
-// protocol.h - Xử lý giao thức thông điệp
-// Parse và xử lý các lệnh từ client
+// protocol.h - Message protocol handler
+// Parse and process commands from client
 
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-// TODO: Định nghĩa các mã trạng thái
+// TODO: Define status codes
 // Response codes
 #define REGISTER_SUCCESS 100
 #define USERNAME_EXISTS 111
@@ -26,9 +26,9 @@
 #define ITEM_ALREADY_SOLD_BUY 912
 #define FORMAT_ERROR 921
 
-// TODO: Hàm parse và xử lý lệnh
-// - Parse message từ client
-// - Route đến handler tương ứng
-// - Format response trả về client
+// TODO: Parse and command handling functions
+// - Parse message from client
+// - Route to appropriate handler
+// - Format response to client
 
 #endif

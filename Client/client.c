@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -51,4 +52,15 @@ int main(int argc,char *argv[]){
   else{
     makeClient(argv);
   }
+=======
+// client.c - Client main file
+// Start client, connect to server
+
+#include "client.h"
+
+int main(int argc, char *argv[]) {
+    // TODO: Implement client main
+    // Connect to server with IP and Port from parameters
+    return 0;
+>>>>>>> e2704817790d36ea43239e6d3334d2dabba29b2e
 }

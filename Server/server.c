@@ -1,5 +1,5 @@
-// server.c - File main của server
-// Khởi động server, lắng nghe kết nối từ client
+// server.c - Server main file
+// Start server, listen for client connections
 
 #include "server.h"
 

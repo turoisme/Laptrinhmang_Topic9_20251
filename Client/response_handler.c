@@ -1,5 +1,5 @@
-// response_handler.c - Implementation xử lý response
+// response_handler.c - Response handler implementation
 
 #include "response_handler.h"
 
-// TODO: Implement các hàm xử lý response
+// TODO: Implement response handling functions

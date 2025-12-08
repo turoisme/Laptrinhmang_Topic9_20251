@@ -1,5 +1,5 @@
-// notification.c - Implementation xử lý thông báo
+// notification.c - Notification handler implementation
 
 #include "notification.h"
 
-// TODO: Implement thread nhận thông báo
+// TODO: Implement notification receiving thread

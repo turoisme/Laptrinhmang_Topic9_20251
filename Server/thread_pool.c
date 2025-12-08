@@ -1,4 +1,4 @@
-// thread_pool.c - Implementation thread pool
+// thread_pool.c - Thread pool implementation
 
 #include "thread_pool.h"
 

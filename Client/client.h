@@ -1,12 +1,12 @@
-// client.h - Header chính của client
-// Định nghĩa các cấu trúc dữ liệu và hàm client
+// client.h - Client main header
+// Define client data structures and functions
 
 #ifndef CLIENT_H
 #define CLIENT_H
 
-// TODO: Định nghĩa cấu trúc client
-// - Thông tin kết nối
-// - Trạng thái đăng nhập
-// - Phòng hiện tại
+// TODO: Define client structure
+// - Connection information
+// - Login status
+// - Current room
 
 #endif

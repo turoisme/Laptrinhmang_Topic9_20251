@@ -1,5 +1,5 @@
-// logger.c - Implementation logging
+// logger.c - Logging implementation
 
 #include "logger.h"
 
-// TODO: Implement các hàm logging
+// TODO: Implement logging functions

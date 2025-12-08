@@ -1,14 +1,11 @@
-// notification.h - Xử lý thông báo real-time
-// Nhận thông báo từ server (thread riêng)
-
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
 
-// TODO: Định nghĩa thread nhận thông báo
-// - Thread lắng nghe message từ server
-// - Hiển thị thông báo đấu giá
-// - Hiển thị countdown (3 phút, 30 giây)
-// - Thông báo có người bid mới
-// - Thông báo kết quả đấu giá
+// TODO: Define notification receiving thread
+// - Thread listening for messages from server
+// - Display auction notifications
+// - Display countdown (3 minutes, 30 seconds)
+// - Notify new bid
+// - Notify auction result
 
 #endif

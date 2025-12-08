@@ -1,13 +1,13 @@
-// response_handler.h - Xử lý response từ server
-// Parse và hiển thị kết quả
+// response_handler.h - Server response handler
+// Parse and display results
 
 #ifndef RESPONSE_HANDLER_H
 #define RESPONSE_HANDLER_H
 
-// TODO: Định nghĩa các hàm xử lý response
+// TODO: Define response handling functions
 // - Parse response code
-// - Hiển thị message tương ứng
-// - Cập nhật trạng thái client
-// - Nhận thông báo broadcast từ server (đấu giá, countdown)
+// - Display corresponding message
+// - Update client status
+// - Receive broadcast notifications from server (auction, countdown)
 
 #endif

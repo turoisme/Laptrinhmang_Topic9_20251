@@ -1,5 +1,5 @@
-// room.c - Implementation quản lý phòng đấu giá
+// room.c - Auction room management implementation
 
 #include "room.h"
 
-// TODO: Implement các hàm quản lý phòng
+// TODO: Implement room management functions
