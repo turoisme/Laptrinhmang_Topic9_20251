@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -72,10 +71,3 @@ char *takeAuthCommand(char* cmd){
   }
   return cmdCode;
 }
-=======
-// auth.c - Authentication implementation
-
-#include "auth.h"
-
-// TODO: Implement authentication functions
->>>>>>> e2704817790d36ea43239e6d3334d2dabba29b2e
