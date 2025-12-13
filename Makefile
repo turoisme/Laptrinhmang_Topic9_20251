@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pthread -g
-LDFLAGS = -pthread
+CFLAGS = -Wall -Wextra -pthread -g `mysql_config --cflags`
+LDFLAGS = -pthread `mysql_config --libs`
 
 # Thư mục
 SERVER_DIR = Server
@@ -40,14 +40,14 @@ all: server client
 server: $(SERVER_TARGET)
 
 $(SERVER_TARGET): $(SERVER_OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 	@echo "Server compiled successfully!"
 
 # Build client
 client: $(CLIENT_TARGET)
 
 $(CLIENT_TARGET): $(CLIENT_OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 	@echo "Client compiled successfully!"
 
 # Compile .c files to .o files

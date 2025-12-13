@@ -4,16 +4,29 @@
 #include "server.h"
 #include "socket_handler.h"
 #include "thread_pool.h"
+#include "database.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <signal.h>
+
+// Cleanup on exit
+void cleanup_handler(int sig) {
+    printf("\nShutting down server...\n");
+    db_cleanup();
+    exit(0);
+}
 
 int main(int argc, char *argv[]) {
     int listen_sock, *conn_sock;
     struct sockaddr_in server_addr, client_addr;
     socklen_t sin_size = sizeof(struct sockaddr_in);
     pthread_t tid;
+    
+    // Setup signal handlers
+    signal(SIGINT, cleanup_handler);
+    signal(SIGTERM, cleanup_handler);
     
     // Check command line arguments
     if (argc != 2) {
@@ -28,9 +41,22 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
+    // Initialize MySQL database
+    printf("Connecting to MySQL database...\n");
+    if (db_init() != 0) {
+        fprintf(stderr, "Failed to initialize database!\n");
+        fprintf(stderr, "Please check:\n");
+        fprintf(stderr, "1. MySQL is running: sudo service mysql start\n");
+        fprintf(stderr, "2. Database exists: mysql -u root -p < schema.sql\n");
+        fprintf(stderr, "3. Credentials in database.h are correct\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("Database connected successfully!\n");
+    
     // Step 1: Construct a TCP socket to listen connection request
     if ((listen_sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket() error: ");
+        db_cleanup();
         exit(EXIT_FAILURE);
     }
     
