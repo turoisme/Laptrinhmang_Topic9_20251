@@ -2,7 +2,7 @@
 
 #include "protocol.h"
 #include "socket_handler.h"
-#include "auth.h"
+#include "database.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,17 +30,15 @@ void handle_register(char *message, int sockfd) {
         return;
     }
     
-    // Call auth function
-    char *result = makeAccount(username, password);
+    // Register user in database
+    int result = db_user_register(username, password);
     
-    if (strcmp(result, "200") == 0) {
+    if (result == 100) {
         send_response(sockfd, REGISTER_SUCCESS, "Registration successful");
-    } else if (strcmp(result, "111") == 0) {
+    } else if (result == 111) {
         send_response(sockfd, USERNAME_EXISTS, "Username already exists");
-    } else if (strcmp(result, "000") == 0) {
-        send_response(sockfd, FORMAT_ERROR, "Server error: account file not found");
     } else {
-        send_response(sockfd, FORMAT_ERROR, "Registration failed");
+        send_response(sockfd, DATABASE_ERROR, "Database error");
     }
 }
 
@@ -60,19 +58,17 @@ void handle_login(char *message, int sockfd) {
         return;
     }
     
-    // Call auth function
-    char *result = checkAccount(username, password);
+    // Login user via database
+    int user_id;
+    int result = db_user_login(username, password, &user_id);
     
-    if (strcmp(result, "200") == 0) {
+    if (result == 200) {
         send_response(sockfd, LOGIN_SUCCESS, "Login successful");
-    } else if (strcmp(result, "211") == 0) {
+        // TODO: Store user_id in session for this sockfd
+    } else if (result == 211) {
         send_response(sockfd, USER_NOT_FOUND, "Invalid username or password");
-    } else if (strcmp(result, "213") == 0) {
-        send_response(sockfd, ALREADY_LOGGED_IN, "Already logged in");
-    } else if (strcmp(result, "000") == 0) {
-        send_response(sockfd, FORMAT_ERROR, "Server error: account file not found");
     } else {
-        send_response(sockfd, FORMAT_ERROR, "Login failed");
+        send_response(sockfd, DATABASE_ERROR, "Database error");
     }
 }
 
