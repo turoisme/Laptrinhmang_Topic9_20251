@@ -4,9 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "room.h"
-#include "auth.h"
 
-// TODO: Implement room management functions
+// Implement room management functions
 
 Room *roomList=NULL;
 
@@ -40,7 +39,7 @@ void removeRoom(Room *list,int sockfd){
 	Room *prev=NULL;
 	while(temp){
 		if(temp->roomSock==sockfd){
-			if(!prev)list=temp;
+			if(!prev)list=temp->next;
 			else prev->next=temp->next;
 			free(temp);
 			return;
