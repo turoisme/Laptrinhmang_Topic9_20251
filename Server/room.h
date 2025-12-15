@@ -2,7 +2,7 @@
 #define ROOM_H
 #include "auth.h"
 
-// TODO: Define Room structure
+// Define Room structure
 // - Create auction room (CREATE_ROOM)
 // - List rooms (LIST_ROOMS)
 // - Join room (JOIN_ROOM)
