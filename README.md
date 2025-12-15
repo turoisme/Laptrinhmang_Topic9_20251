@@ -1,6 +1,107 @@
 # HỆ THỐNG ĐẤU GIÁ TRỰC TUYẾN
 
-Ứng dụng đấu giá trực tuyến sử dụng TCP socket và đa luồng, được viết bằng C cho hệ điều hành Linux.
+Ứng dụng đấu giá trực tuyến sử dụng TCP socket, multi-threading và MySQL database, được viết bằng C cho hệ điều hành Linux.
+
+## 🚀 Cài đặt cho người clone repository
+
+### ⚠️ LƯU Ý QUAN TRỌNG
+Database MySQL là **LOCAL** trên máy của bạn, không được push lên Git. Mỗi người clone về phải tự setup database riêng.
+
+### Bước 1: Clone repository
+```bash
+git clone https://github.com/turoisme/Laptrinhmang_Topic9_20251.git
+cd Laptrinhmang_Topic9_20251
+```
+
+### Bước 2: Cài đặt MySQL (Ubuntu/WSL)
+```bash
+# Cài MySQL server và thư viện development
+sudo apt update
+sudo apt install mysql-server libmysqlclient-dev
+
+# Khởi động MySQL service
+sudo service mysql start
+
+# Kiểm tra MySQL đã chạy chưa
+sudo service mysql status
+```
+
+### Bước 3: Tạo Database và Tables
+```bash
+# Import database schema
+sudo mysql < schema.sql
+
+# Kiểm tra database đã tạo
+sudo mysql -e "USE auction_system; SHOW TABLES;"
+```
+
+**Kết quả mong đợi:**
+```
++--------------------------+
+| Tables_in_auction_system |
++--------------------------+
+| activity_logs            |
+| bids                     |
+| items                    |
+| room_members             |
+| rooms                    |
+| users                    |
++--------------------------+
+```
+
+### Bước 4: Tạo MySQL User cho ứng dụng
+```bash
+sudo mysql -e "
+CREATE USER IF NOT EXISTS 'auction_user'@'localhost' IDENTIFIED BY 'auction_pass';
+GRANT ALL PRIVILEGES ON auction_system.* TO 'auction_user'@'localhost';
+FLUSH PRIVILEGES;
+"
+```
+
+**Giải thích:**
+- Database: `auction_system`
+- Username: `auction_user`
+- Password: `auction_pass`
+- Scope: Chỉ localhost (không expose ra ngoài)
+
+### Bước 5: Compile và chạy Server
+```bash
+# Compile
+make clean && make server
+
+# Chạy server trên port 5500
+./run_server 5500
+```
+
+**Kết quả thành công:**
+```
+Connecting to MySQL database...
+Initializing MySQL connection pool...
+MySQL pool initialized with 10 connections
+Database connected successfully!
+Server started at the port 5500
+```
+
+### Bước 6: Test (Terminal khác)
+```bash
+# Test với sample user đã có sẵn
+echo -e "LOGIN alice pass123\r\n" | nc localhost 5500
+```
+
+**Response mong đợi:**
+```
+200 Login successful
+```
+
+## 📊 Database Schema (MySQL)
+
+Project sử dụng MySQL local với 6 tables:
+3. **items** - Sản phẩm đấu giá
+4. **bids** - Lịch sử đấu giá
+5. **room_members** - Thành viên phòng
+6. **activity_logs** - Logs hoạt động
+
+Chi tiết xem file `schema.sql`
 
 ## Cấu trúc thư mục
 
@@ -199,19 +300,79 @@ make clean
 
 ## Yêu cầu hệ thống
 
-- **Hệ điều hành**: Linux
+- **Hệ điều hành**: Linux (Ubuntu/WSL)
 - **Compiler**: GCC với hỗ trợ pthread
+- **Database**: MySQL Server 8.0+
 - **Thư viện**: 
   - pthread (đa luồng)
   - socket (TCP networking)
+  - libmysqlclient (MySQL connector)
+
+## 🔧 Troubleshooting
+
+### Lỗi: "Can't connect to MySQL server"
+```bash
+# Khởi động MySQL service
+sudo service mysql start
+
+# Auto-start MySQL khi boot WSL (thêm vào ~/.bashrc):
+if ! service mysql status > /dev/null 2>&1; then
+    sudo service mysql start
+fi
+```
+
+### Lỗi: "Access denied for user 'auction_user'"
+```bash
+# Tạo lại user
+sudo mysql -e "
+DROP USER IF EXISTS 'auction_user'@'localhost';
+CREATE USER 'auction_user'@'localhost' IDENTIFIED BY 'auction_pass';
+GRANT ALL PRIVILEGES ON auction_system.* TO 'auction_user'@'localhost';
+FLUSH PRIVILEGES;
+"
+```
+
+### Lỗi: "Unknown database 'auction_system'"
+```bash
+# Import lại schema
+sudo mysql < schema.sql
+```
+
+### Lỗi: "mysql_config: command not found"
+```bash
+# Cài development package
+sudo apt install libmysqlclient-dev
+```
+
+### Lỗi compile: "undefined reference to mysql_xxx"
+```bash
+# Kiểm tra mysql_config
+mysql_config --libs
+
+# Clean và rebuild
+make clean
+make server
+```
+
+### Xem database hiện tại
+```bash
+# Login MySQL
+sudo mysql
+
+# Trong MySQL prompt:
+USE auction_system;
+SHOW TABLES;
+SELECT * FROM users;
+SELECT * FROM rooms;
+```
 
 ## Kiến trúc hệ thống
 
 ### Server
 - **Đa luồng**: Mỗi client được xử lý bởi một thread riêng
 - **TCP Socket**: Lắng nghe và chấp nhận kết nối
-- **Database**: Lưu trữ users, rooms, items, bids
-- **Logging**: Ghi lại tất cả hoạt động
+- **Database**: MySQL với connection pool (10 connections)
+- **Logging**: Ghi lại tất cả hoạt động vào database
 - **Timer**: Đếm ngược 3 phút cho mỗi phiên đấu giá
 
 ### Client

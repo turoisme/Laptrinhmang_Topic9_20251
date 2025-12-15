@@ -24,12 +24,6 @@ void handle_register(char *message, int sockfd) {
         return;
     }
     
-    // Check username/password length
-    if (strlen(username) > 350 || strlen(password) > 30) {
-        send_response(sockfd, INVALID_INPUT_PARAMETER, "Username or password too long");
-        return;
-    }
-    
     // Register user in database
     int result = db_user_register(username, password);
     
@@ -49,12 +43,6 @@ void handle_login(char *message, int sockfd) {
     // Parse: LOGIN username password
     if (sscanf(message, "LOGIN %350s %30s", username, password) != 2) {
         send_response(sockfd, FORMAT_ERROR, "Format: LOGIN <username> <password>");
-        return;
-    }
-    
-    // Check username/password length
-    if (strlen(username) > 350 || strlen(password) > 30) {
-        send_response(sockfd, INVALID_INPUT_PARAMETER, "Username or password too long");
         return;
     }
     

@@ -1,6 +1,3 @@
-// database.h - Data storage
-// Manage storage for users, rooms, items
-
 #ifndef DATABASE_H
 #define DATABASE_H
 
@@ -19,7 +16,7 @@ typedef struct {
 #define DB_USER "auction_user"
 #define DB_PASS "auction_pass"
 #define DB_NAME "auction_system"
-#define DB_POOL_SIZE 10
+#define DB_POOL_SIZE 100
 
 // Initialize database connection pool
 int db_init();
