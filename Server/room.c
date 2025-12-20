@@ -1,12 +1,9 @@
-// room.c - Auction room management implementation
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "room.h"
 //#include "database.h"
 
-// Implement room management functions
 
 void clearRoom(Room *room);
 Room *roomList=NULL;

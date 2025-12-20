@@ -1,5 +1,3 @@
-// database.c - MySQL database implementation
-
 #include "database.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,18 +9,15 @@ static pthread_mutex_t pool_lock = PTHREAD_MUTEX_INITIALIZER;
 
 // Initialize database connection pool
 int db_init() {
-    printf("Initializing MySQL connection pool...\n");
-    
+
     for (int i = 0; i < DB_POOL_SIZE; i++) {
         db_pool[i].conn = mysql_init(NULL);
         if (!db_pool[i].conn) {
-            fprintf(stderr, "mysql_init() failed\n");
             return -1;
         }
         
         if (!mysql_real_connect(db_pool[i].conn, DB_HOST, DB_USER, DB_PASS,
                                 DB_NAME, 0, NULL, 0)) {
-            fprintf(stderr, "Connection %d failed: %s\n", i, mysql_error(db_pool[i].conn));
             return -1;
         }
         
@@ -30,7 +25,6 @@ int db_init() {
         pthread_mutex_init(&db_pool[i].lock, NULL);
     }
     
-    printf("MySQL pool initialized with %d connections\n", DB_POOL_SIZE);
     return 0;
 }
 
@@ -60,7 +54,6 @@ MYSQL* db_get_connection() {
     }
     
     pthread_mutex_unlock(&pool_lock);
-    fprintf(stderr, "No available database connections!\n");
     return NULL;
 }
 

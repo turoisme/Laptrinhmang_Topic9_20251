@@ -87,9 +87,9 @@ CREATE TABLE IF NOT EXISTS activity_logs (
 -- Insert sample data
 INSERT INTO users (username, password) VALUES 
     ('admin', 'admin123'),
-    ('alice', 'pass123'),
-    ('bob', 'pass456');
+    ('tan', 'pass123'),
+    ('vinh', 'pass456');
 
 INSERT INTO rooms (room_name, owner_id) VALUES
-    ('VIP_ROOM', 1),
-    ('PUBLIC_ROOM', 2);
+    ('Art auction room', 1),
+    ('Antique auction room', 2);
