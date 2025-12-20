@@ -19,7 +19,6 @@ User *makeUser(int sockfd) {
 
 User *addUser(User *list,User *newUser) {
 	if (!newUser) return list;
-	newUser->next = NULL;
 	if(list==NULL) {
 		list=newUser;
 		return list;
@@ -55,13 +54,20 @@ User *findUser(User *list,int sockfd) {
 	return NULL;
 }
 
-void listUser(User *list){
-	printf("List user\n");
+void listUser(User *list,int padding){
+	while(padding--)printf(" ");
 	User *temp=list;
 	while(temp){
-		printf("User at socket %d has user name %s\n",temp->sockfd,temp->userName);
+		printf("User %s has id %i and role %s\n",temp->userName,temp->sockfd,roleToString(temp->role));
 		temp=temp->next;
 	}
+	if(!list)printf("\n");
+}
+
+void clearUser(User *list){
+	if(!list)return;
+	if(list->next!=NULL)clearUser(list->next);
+	free(list);
 }
 
 int checkAccount(int sockfd, char *userAccount, char *password) {
@@ -100,34 +106,41 @@ int removeAccount(int sockfd) {
 	return 000; //ma log out thanh cong
 }
 
+char *roleToString(Role role){
+	switch(role){
+		case ROLE_ADMIN:return "admin";
+		case ROLE_HOST:return "host";
+		case ROLE_GUEST:return "guest";
+		case ROLE_NONE:return "none";
+	}
+}
+//Call when LOGIN, REGISTER,LOGOUT
 char *takeAuthCommand(int sockfd,char* cmd) {
+	//Parse command, param
 	static char cmdCode[4];
 	cmdCode[3]='\0';
 	int returnValue;
-	int param=0;
+	char *token;
 	char *command = strtok(cmd, " ");
-	char *account = strtok(NULL, " ");
-	char *password = strtok(NULL, " ");
-	
-	if (account){
-		param+=1;
+	int paramCount=0;
+	char param[10][350];
+	while((token=strtok(NULL, " "))!=NULL){
+		strcpy(param[paramCount],token);
+		paramCount++;
 	}
-	if(password){
-		param+=1;
-	}
-
-	if (param==2&&(strlen(account) > 350 || strlen(password) > 30)) return "112\0";
-
-	if (strcmp(command, "LOGIN") == 0 && param == 2) {
-		returnValue=checkAccount(sockfd, account, password);
-	} else if (strcmp(command, "REGISTER") == 0 && param == 2) {
-		returnValue=makeAccount(sockfd, account, password);
-	} else if (strcmp(command, "LOGOUT") == 0 && param == 0) {
-		returnValue=removeAccount(1000); //sockfd
+	if (paramCount==2&&(strlen(param[0]) > 350 || strlen(param[1]) > 30)) return "112\0";
+	//Calling command
+	if (strcmp(command, "LOGIN") == 0 && paramCount == 2) {
+		returnValue=checkAccount(sockfd, param[0], param[1]);
+	} else if (strcmp(command, "REGISTER") == 0 && paramCount == 2) {
+		returnValue=makeAccount(sockfd, param[0], param[1]);
+	} else if (strcmp(command, "LOGOUT") == 0 && paramCount == 0) {
+		returnValue=removeAccount(sockfd);
 	} else {
 		printf("Invalid command entry at auth.c: %s\n",cmd);
 		return "000\0";
 	}
+	//Handling return
 	if(!returnValue)strcpy(cmdCode,"000");
 	else sprintf(cmdCode,"%3d",returnValue);
 	if(strcmp(cmdCode,"100")==0||strcmp(cmdCode,"200")==0) {
@@ -136,7 +149,7 @@ char *takeAuthCommand(int sockfd,char* cmd) {
 			printf("Error at making new user at auth.c\n");
 			return "000\0";
 		}
-		strcpy(newUser->userName,account);
+		strcpy(newUser->userName,param[0]);
 		userList=addUser(userList,newUser);
 	}
 	return cmdCode;

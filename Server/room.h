@@ -1,22 +1,25 @@
 #ifndef ROOM_H
 #define ROOM_H
 #include "auth.h"
+#include "item.h"
 
-// Define Room structure
-// - Create auction room (CREATE_ROOM)
-// - List rooms (LIST_ROOMS)
-// - Join room (JOIN_ROOM)
-// - Control room access
-// - Manage room members
-
+//type def
 typedef struct Room {
 	int roomSock;
+	char roomName[20];
 	User *host;
 	User *guest;
-	//Item *itemList;   //is for item in room, activate later
+	int bidTime;
+	Item *itemList;
+	Item *biddingItem;
 	struct Room *next;
 }Room;
 
+//variable for other files
 extern Room *roomList;
+
+//func declaration
+void listRoom(Room *list,int padding);
+char *takeRoomCommand(int sockfd,char *cmd);
 
 #endif
