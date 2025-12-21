@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "auth.h"
+#include "room.h"
 // Helper function to send formatted response
 void send_response(int sockfd, int code, const char *message) {
     char response[BUFF_SIZE];
@@ -16,21 +17,17 @@ void send_response(int sockfd, int code, const char *message) {
 
 // Handle REGISTER command
 void handle_register(char *message, int sockfd) {
-    char username[351], password[31];
-    
-    // Parse: REGISTER username password
-    if (sscanf(message, "REGISTER %350s %30s", username, password) != 2) {
-        send_response(sockfd, FORMAT_ERROR, "Format: REGISTER <username> <password>");
-        return;
-    }
-    
-    // Register user in database
-    int result = db_user_register(username, password);
+    char *code = takeAuthCommand(sockfd, message);
+    int result = atoi(code);
     
     if (result == 100) {
         send_response(sockfd, REGISTER_SUCCESS, "Registration successful");
     } else if (result == 111) {
         send_response(sockfd, USERNAME_EXISTS, "Username already exists");
+    } else if (result == 112) {
+        send_response(sockfd, INVALID_INPUT_PARAMETER, "Invalid input parameters");
+    } else if (result == 213) {
+        send_response(sockfd, ALREADY_LOGGED_IN, "Already logged in");
     } else {
         send_response(sockfd, DATABASE_ERROR, "Database error");
     }
@@ -38,23 +35,17 @@ void handle_register(char *message, int sockfd) {
 
 // Handle LOGIN command
 void handle_login(char *message, int sockfd) {
-    char username[351], password[31];
-    
-    // Parse: LOGIN username password
-    if (sscanf(message, "LOGIN %350s %30s", username, password) != 2) {
-        send_response(sockfd, FORMAT_ERROR, "Format: LOGIN <username> <password>");
-        return;
-    }
-    
-    // Login user via database
-    int user_id;
-    int result = db_user_login(username, password, &user_id);
+    char *code = takeAuthCommand(sockfd, message);
+    int result = atoi(code);
     
     if (result == 200) {
         send_response(sockfd, LOGIN_SUCCESS, "Login successful");
-        // TODO: Store user_id in session for this sockfd
     } else if (result == 211) {
         send_response(sockfd, USER_NOT_FOUND, "Invalid username or password");
+    } else if (result == 213) {
+        send_response(sockfd, ALREADY_LOGGED_IN, "Already logged in");
+    } else if (result == 112) {
+        send_response(sockfd, INVALID_INPUT_PARAMETER, "Invalid input parameters");
     } else {
         send_response(sockfd, DATABASE_ERROR, "Database error");
     }
@@ -62,32 +53,32 @@ void handle_login(char *message, int sockfd) {
 
 // Handle CREATE_ROOM command
 void handle_create_room(char *message, int sockfd) {
-    char room_name[100];
+    char *code = takeRoomCommand(sockfd, message);
+    int result = atoi(code);
     
-    // Parse: CREATE_ROOM room_name
-    if (sscanf(message, "CREATE_ROOM %99s", room_name) != 1) {
-        send_response(sockfd, FORMAT_ERROR, "Format: CREATE_ROOM <room_name>");
-        return;
+    if (result == 400) {
+        send_response(sockfd, ROOM_CREATED, "Room created successfully");
+    } else if (result == 721) {
+        send_response(sockfd, WENT_INTO_ANOTHER_ROOM, "Already in another room");
+    } else {
+        send_response(sockfd, DATABASE_ERROR, "Failed to create room");
     }
-    
-    // TODO: Implement actual room creation
-    // For now, just send success
-    send_response(sockfd, ROOM_CREATED, room_name);
 }
 
 // Handle JOIN_ROOM command
 void handle_join_room(char *message, int sockfd) {
-    char room_name[100];
+    char *code = takeRoomCommand(sockfd, message);
+    int result = atoi(code);
     
-    // Parse: JOIN_ROOM room_name
-    if (sscanf(message, "JOIN_ROOM %99s", room_name) != 1) {
-        send_response(sockfd, FORMAT_ERROR, "Format: JOIN_ROOM <room_name>");
-        return;
+    if (result == 300) {
+        send_response(sockfd, JOIN_OK, "Joined room successfully");
+    } else if (result == 313) {
+        send_response(sockfd, ROOM_CLOSED, "Room not found");
+    } else if (result == 721) {
+        send_response(sockfd, WENT_INTO_ANOTHER_ROOM, "Already in another room");
+    } else {
+        send_response(sockfd, DATABASE_ERROR, "Failed to join room");
     }
-    
-    // TODO: Implement actual room joining
-    // For now, just send success
-    send_response(sockfd, JOIN_OK, room_name);
 }
 
 // Handle CREATE_ITEM command

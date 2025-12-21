@@ -2,4 +2,19 @@
 
 #include "response_handler.h"
 
-// TODO: Implement response handling functions
+void parse_and_display_response(const char *response) {
+    int code;
+    char message[BUFF_SIZE];
+    
+    // Parse response: "code message"
+    if (sscanf(response, "%d %[^\n]", &code, message) >= 1) {
+        printf("[Response %d] ", code);
+        if (sscanf(response, "%d %[^\n]", &code, message) == 2) {
+            printf("%s\n", message);
+        } else {
+            printf("OK\n");
+        }
+    } else {
+        printf("[Unknown response] %s\n", response);
+    }
+}
