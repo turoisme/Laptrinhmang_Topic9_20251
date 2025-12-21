@@ -91,10 +91,10 @@ int main(int argc, char *argv[]) {
         }
         clear_input_buffer();
         
-        // HOME MENU (not logged in)
+        // Home menu 
         if (!is_logged_in) {
             switch (choice) {
-                case 1: // REGISTER
+                case 1: //register
                     printf("Username: ");
                     scanf("%99s", username);
                     printf("Password: ");
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 2: // LOGIN
+                case 2: // login
                     printf("Username: ");
                     scanf("%99s", username);
                     printf("Password: ");
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
                                 parse_and_display_response(response);
                                 if (code == LOGIN_SUCCESS) {
                                     is_logged_in = 1;
-                                    printf(">>> You are now logged in! <<<\n");
+                                    printf("You are now logged in!\n");
                                 }
                             }
                             free(response);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 0: // EXIT
+                case 0: // exit
                     printf("Disconnecting...\n");
                     disconnect_from_server(&conn);
                     break;
@@ -142,10 +142,10 @@ int main(int argc, char *argv[]) {
                     break;
             }
         }
-        // ROOM MENU (logged in, not in room)
+        // Room menu
         else if (!is_in_room) {
             switch (choice) {
-                case 1: // CREATE_ROOM
+                case 1: //create room
                     printf("Room name: ");
                     scanf("%99s", room_name);
                     clear_input_buffer();
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 2: // JOIN_ROOM
+                case 2: // join 
                     printf("Room name: ");
                     scanf("%99s", room_name);
                     clear_input_buffer();
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
                                 parse_and_display_response(response);
                                 if (code == JOIN_OK) {
                                     is_in_room = 1;
-                                    printf(">>> You joined the room! <<<\n");
+                                    printf("You joined the room!\n");
                                 }
                             }
                             free(response);
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 3: // LIST_ROOMS
+                case 3: // list
                     if (cmd_list_rooms(&conn) > 0) {
                         if (receive_response(&conn, &response) > 0) {
                             parse_and_display_response(response);
@@ -188,12 +188,12 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 4: // LOGOUT
+                case 4: 
                     is_logged_in = 0;
-                    printf(">>> Logged out! <<<\n");
+                    printf("Logged out!\n");
                     break;
                     
-                case 0: // EXIT
+                case 0: //
                     printf("Disconnecting...\n");
                     disconnect_from_server(&conn);
                     break;
@@ -203,10 +203,10 @@ int main(int argc, char *argv[]) {
                     break;
             }
         }
-        // ITEM MENU (logged in and in room)
+        // item menu
         else {
             switch (choice) {
-                case 1: // CREATE_ITEM
+                case 1: // create item
                     printf("Item name: ");
                     scanf("%99s", item_name);
                     printf("Start price: ");
@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 2: // DELETE_ITEM
+                case 2: // delete item
                     printf("Item name: ");
                     scanf("%99s", item_name);
                     clear_input_buffer();
@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 3: // LIST_ITEMS
+                case 3: // list item
                     if (cmd_list_items(&conn) > 0) {
                         if (receive_response(&conn, &response) > 0) {
                             parse_and_display_response(response);
@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 4: // BID
+                case 4: //bid
                     printf("Item name: ");
                     scanf("%99s", item_name);
                     printf("Bid amount: ");
@@ -260,7 +260,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 5: // BUY
+                case 5: // buy
                     printf("Item name: ");
                     scanf("%99s", item_name);
                     clear_input_buffer();
@@ -273,24 +273,24 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                     
-                case 6: // LEAVE_ROOM
+                case 6: // leave room
                     if (cmd_leave_room(&conn) > 0) {
                         if (receive_response(&conn, &response) > 0) {
                             parse_and_display_response(response);
                             is_in_room = 0;
-                            printf(">>> You left the room! <<<\n");
+                            printf("You left the room!\n");
                             free(response);
                         }
                     }
                     break;
                     
-                case 7: // LOGOUT
+                case 7: // logout
                     is_logged_in = 0;
                     is_in_room = 0;
-                    printf(">>> Logged out! <<<\n");
+                    printf("Logged out!\n");
                     break;
                     
-                case 0: // EXIT
+                case 0: // exit
                     printf("Disconnecting...\n");
                     disconnect_from_server(&conn);
                     break;
