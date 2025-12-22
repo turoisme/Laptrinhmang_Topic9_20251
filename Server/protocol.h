@@ -14,9 +14,11 @@
 #define LOGIN_SUCCESS 200
 #define USER_NOT_FOUND 211
 #define ALREADY_LOGGED_IN 213
+#define LOGOUT_SUCCESS 220
 #define JOIN_OK 300
 #define ROOM_CLOSED 313
 #define ROOM_CREATED 400
+#define LEAVE_SUCCESS 550
 #define ITEM_CREATED 600
 #define ITEM_DELETED 620
 #define ITEM_ALREADY_SOLD 621
@@ -27,12 +29,6 @@
 #define BUY_OK 900
 #define ITEM_ALREADY_SOLD_BUY 912
 #define FORMAT_ERROR 921
-// TODO: Parse and command handling functions
-// - Parse message from client
-// - Route to appropriate handler
-// - Format response to client
-
-// Main handler for incoming client messages
 void handle_client_message(char *message, int sockfd);
 
 #endif

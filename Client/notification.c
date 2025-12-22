@@ -1,5 +1,3 @@
-// notification.c - Notification handler implementation
-
 #include "notification.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,23 +8,18 @@ static pthread_t notification_thread;
 static int thread_running = 0;
 static ClientConnection *global_conn = NULL;
 
-// Thread function to receive notifications from server
+
 void *notification_receiver(void *arg) {
     ClientConnection *conn = (ClientConnection *)arg;
     char *notification = NULL;
-    
-    printf("\n[Notification thread started]\n");
-    
     while (thread_running && is_connected(conn)) {
         // Receive notification from server
         int result = receive_response(conn, &notification);
         
         if (result <= 0) {
-            // Connection lost
             break;
         }
         
-        // Parse notification code
         int code;
         char message[BUFF_SIZE];
         
@@ -78,7 +71,6 @@ void *notification_receiver(void *arg) {
     return NULL;
 }
 
-// Start notification receiving thread
 void start_notification_thread(ClientConnection *conn) {
     if (thread_running) {
         printf("Notification thread already running\n");
@@ -97,15 +89,11 @@ void start_notification_thread(ClientConnection *conn) {
     pthread_detach(notification_thread);
 }
 
-// Stop notification receiving thread
 void stop_notification_thread() {
     if (thread_running) {
         thread_running = 0;
-        // Thread will exit naturally when receive_response returns
     }
 }
-
-// Check if notification thread is running
 int is_notification_running() {
     return thread_running;
 }

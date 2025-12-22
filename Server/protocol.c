@@ -41,7 +41,6 @@ void send_response(int sockfd, int code) {
     send_message(sockfd, response);
 }
 
-
 void handle_client_message(char *message, int sockfd) {
     char command[50];
     

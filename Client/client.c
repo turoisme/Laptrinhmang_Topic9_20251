@@ -75,7 +75,6 @@ int main(int argc, char *argv[]) {
     int is_in_room = 0;
     
     while (is_connected(&conn)) {
-        // Display appropriate menu based on state
         if (!is_logged_in) {
             print_home_menu();
         } else if (!is_in_room) {
