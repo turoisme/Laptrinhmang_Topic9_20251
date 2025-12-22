@@ -7,6 +7,7 @@
 // TODO: Define status codes
 // Response codes
 #define DATABASE_ERROR 000
+#define FUNCTION_IN_DEV 001
 #define REGISTER_SUCCESS 100
 #define USERNAME_EXISTS 111
 #define INVALID_INPUT_PARAMETER 112

@@ -1,25 +1,11 @@
 #ifndef ROOM_H
 #define ROOM_H
-#include "auth.h"
-#include "item.h"
 
-//type def
-typedef struct Room {
-	int roomSock;
-	char roomName[20];
-	User *host;
-	User *guest;
-	int bidTime;
-	Item *itemList;
-	Item *biddingItem;
-	struct Room *next;
-}Room;
-
-//variable for other files
-extern Room *roomList;
-
-//func declaration
-void listRoom(Room *list,int padding);
-char *takeRoomCommand(int sockfd,char *cmd);
+int handle_create_room(char *message, int sockfd);
+int handle_join_room(char *message, int sockfd);
+int handle_list_rooms(int sockfd);
+int handle_leave_room(char *message, int sockfd);
+int handle_bid(char *message, int sockfd);
+int handle_buy(char *message, int sockfd);
 
 #endif
