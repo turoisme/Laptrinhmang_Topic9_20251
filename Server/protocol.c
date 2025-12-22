@@ -8,18 +8,17 @@
 #include <stdlib.h>
 #include "auth.h"
 #include "room.h"
-// Helper function to send formatted response
+// send formatted response
 void send_response(int sockfd, int code, const char *message) {
     char response[BUFF_SIZE];
     snprintf(response, BUFF_SIZE, "%d %s", code, message);
     send_message(sockfd, response);
 }
 
-// Handle REGISTER command
+// Handle REGISTER 
 void handle_register(char *message, int sockfd) {
     char *code = takeAuthCommand(sockfd, message);
-    int result = atoi(code);
-    
+    int result = atoi(code);    
     if (result == 100) {
         send_response(sockfd, REGISTER_SUCCESS, "Registration successful");
     } else if (result == 111) {
@@ -33,7 +32,7 @@ void handle_register(char *message, int sockfd) {
     }
 }
 
-// Handle LOGIN command
+// Handle LOGIN 
 void handle_login(char *message, int sockfd) {
     char *code = takeAuthCommand(sockfd, message);
     int result = atoi(code);
@@ -51,7 +50,7 @@ void handle_login(char *message, int sockfd) {
     }
 }
 
-// Handle CREATE_ROOM command
+// Handle CREATE_ROOM 
 void handle_create_room(char *message, int sockfd) {
     char *code = takeRoomCommand(sockfd, message);
     int result = atoi(code);
@@ -65,7 +64,7 @@ void handle_create_room(char *message, int sockfd) {
     }
 }
 
-// Handle JOIN_ROOM command
+// Handle JOIN_ROOM
 void handle_join_room(char *message, int sockfd) {
     char *code = takeRoomCommand(sockfd, message);
     int result = atoi(code);
@@ -81,87 +80,37 @@ void handle_join_room(char *message, int sockfd) {
     }
 }
 
-// Handle CREATE_ITEM command
+// Handle CREATE_ITEM 
 void handle_create_item(char *message, int sockfd) {
-    char item_name[100];
-    int start_price, buy_now_price;
-    
-    // Parse: CREATE_ITEM item_name start_price buy_now_price
-    if (sscanf(message, "CREATE_ITEM %99s %d %d", item_name, &start_price, &buy_now_price) != 3) {
-        send_response(sockfd, FORMAT_ERROR, "Format: CREATE_ITEM <name> <start_price> <buy_now_price>");
-        return;
-    }
-    
-    if (start_price <= 0 || buy_now_price <= 0 || buy_now_price <= start_price) {
-        send_response(sockfd, INVALID_INPUT_PARAMETER, "Invalid prices");
-        return;
-    }
-    
-    // TODO: Implement actual item creation
-    send_response(sockfd, ITEM_CREATED, item_name);
+
 }
 
-// Handle DELETE_ITEM command
+// Handle DELETE_ITEM 
 void handle_delete_item(char *message, int sockfd) {
-    char item_name[100];
-    
-    // Parse: DELETE_ITEM item_name
-    if (sscanf(message, "DELETE_ITEM %99s", item_name) != 1) {
-        send_response(sockfd, FORMAT_ERROR, "Format: DELETE_ITEM <item_name>");
-        return;
-    }
-    
-    // TODO: Implement actual item deletion
-    send_response(sockfd, ITEM_DELETED, item_name);
+
 }
 
-// Handle BID command
+// Handle BID 
 void handle_bid(char *message, int sockfd) {
-    char item_name[100];
-    int bid_amount;
-    
-    // Parse: BID item_name amount
-    if (sscanf(message, "BID %99s %d", item_name, &bid_amount) != 2) {
-        send_response(sockfd, FORMAT_ERROR, "Format: BID <item_name> <amount>");
-        return;
-    }
-    
-    if (bid_amount <= 0) {
-        send_response(sockfd, INVALID_INPUT_PARAMETER, "Bid amount must be positive");
-        return;
-    }
-    
-    // TODO: Implement actual bidding logic
-    send_response(sockfd, BID_OK, item_name);
+  
 }
 
-// Handle BUY command
+// Handle BUY 
 void handle_buy(char *message, int sockfd) {
-    char item_name[100];
-    
-    // Parse: BUY item_name
-    if (sscanf(message, "BUY %99s", item_name) != 1) {
-        send_response(sockfd, FORMAT_ERROR, "Format: BUY <item_name>");
-        return;
-    }
-    
-    // TODO: Implement actual buy now logic
-    send_response(sockfd, BUY_OK, item_name);
+
 }
 
-// Handle LIST_ROOMS command
+// Handle LIST_ROOMS
 void handle_list_rooms(int sockfd) {
-    // TODO: Implement actual room listing
-    send_response(sockfd, 300, "No rooms available");
+
 }
 
-// Handle LIST_ITEMS command
+// Handle LIST_ITEMS 
 void handle_list_items(int sockfd) {
-    // TODO: Implement actual item listing
-    send_response(sockfd, 600, "No items available");
+
 }
 
-// Main handler for incoming client messages
+// Handle client message
 void handle_client_message(char *message, int sockfd) {
     char command[50];
     

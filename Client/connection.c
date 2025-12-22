@@ -1,8 +1,5 @@
-// connection.c - Connection management implementation
-
 #include "connection.h"
 
-// Connect to server
 int connect_to_server(ClientConnection *conn, const char *ip, int port) {
     // Create socket
     conn->sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -11,7 +8,6 @@ int connect_to_server(ClientConnection *conn, const char *ip, int port) {
         return -1;
     }
     
-    // Setup server address
     memset(&conn->server_addr, 0, sizeof(conn->server_addr));
     conn->server_addr.sin_family = AF_INET;
     conn->server_addr.sin_port = htons(port);
@@ -22,7 +18,6 @@ int connect_to_server(ClientConnection *conn, const char *ip, int port) {
         return -1;
     }
     
-    // Connect to server
     if (connect(conn->sockfd, (struct sockaddr*)&conn->server_addr, 
                 sizeof(conn->server_addr)) < 0) {
         perror("Connection failed");
@@ -38,7 +33,6 @@ int connect_to_server(ClientConnection *conn, const char *ip, int port) {
     return 0;
 }
 
-// Disconnect from server
 void disconnect_from_server(ClientConnection *conn) {
     if (conn->is_connected) {
         close(conn->sockfd);
@@ -46,19 +40,13 @@ void disconnect_from_server(ClientConnection *conn) {
         printf("Disconnected from server\n");
     }
 }
-
-// Send command to server (automatically adds \r\n)
 int send_command(ClientConnection *conn, const char *command) {
     if (!conn->is_connected) {
         fprintf(stderr, "Not connected to server\n");
         return -1;
     }
-    
-    // Format message with delimiter
     char message[BUFF_SIZE];
     int msg_len = snprintf(message, BUFF_SIZE, "%s%s", command, DELIMITER);
-    
-    // Send message
     int total_sent = 0;
     while (total_sent < msg_len) {
         int sent = send(conn->sockfd, message + total_sent, 
@@ -74,7 +62,6 @@ int send_command(ClientConnection *conn, const char *command) {
     return total_sent;
 }
 
-// Receive response from server (handles streaming with \r\n)
 int receive_response(ClientConnection *conn, char **response) {
     if (!conn->is_connected) {
         fprintf(stderr, "Not connected to server\n");
@@ -86,7 +73,6 @@ int receive_response(ClientConnection *conn, char **response) {
     mess[0] = '\0';
     int mess_len = 0;
     
-    // Check buffer first
     if (conn->conn_buf.buffer_len > 0) {
         char *delim = strstr(conn->conn_buf.buffer, DELIMITER);
         if (delim) {

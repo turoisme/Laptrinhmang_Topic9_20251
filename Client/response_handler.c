@@ -1,12 +1,7 @@
-// response_handler.c - Response handler implementation
-
 #include "response_handler.h"
-
 void parse_and_display_response(const char *response) {
     int code;
     char message[BUFF_SIZE];
-    
-    // Parse response: "code message"
     if (sscanf(response, "%d %[^\n]", &code, message) >= 1) {
         printf("[Response %d] ", code);
         if (sscanf(response, "%d %[^\n]", &code, message) == 2) {
