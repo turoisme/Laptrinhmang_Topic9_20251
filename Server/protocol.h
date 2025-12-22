@@ -26,12 +26,6 @@
 #define BUY_OK 900
 #define ITEM_ALREADY_SOLD_BUY 912
 #define FORMAT_ERROR 921
-// TODO: Parse and command handling functions
-// - Parse message from client
-// - Route to appropriate handler
-// - Format response to client
-
-// Main handler for incoming client messages
 void handle_client_message(char *message, int sockfd);
 
 #endif

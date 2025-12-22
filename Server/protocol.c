@@ -82,32 +82,32 @@ void handle_join_room(char *message, int sockfd) {
 
 // Handle CREATE_ITEM 
 void handle_create_item(char *message, int sockfd) {
-
+    //Tan
 }
 
 // Handle DELETE_ITEM 
 void handle_delete_item(char *message, int sockfd) {
-
+   //Vinh
 }
 
 // Handle BID 
 void handle_bid(char *message, int sockfd) {
-  
+  //Vinh
 }
 
 // Handle BUY 
 void handle_buy(char *message, int sockfd) {
-
+    //Vinh 
 }
 
 // Handle LIST_ROOMS
 void handle_list_rooms(int sockfd) {
-
+    //Tan 
 }
 
 // Handle LIST_ITEMS 
 void handle_list_items(int sockfd) {
-
+    //Tan
 }
 
 // Handle client message

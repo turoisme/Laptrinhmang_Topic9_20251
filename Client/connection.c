@@ -1,5 +1,4 @@
 #include "connection.h"
-
 int connect_to_server(ClientConnection *conn, const char *ip, int port) {
     // Create socket
     conn->sockfd = socket(AF_INET, SOCK_STREAM, 0);
