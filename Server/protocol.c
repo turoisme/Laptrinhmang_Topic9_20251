@@ -13,12 +13,15 @@ char *parse_response(int code){
     switch(code){
         case 000:return "Empty command";
         case 001:return "Function in development";
+        case 002:return "Server overload";
         case 100:return "Register successful";
         case 111:return "Username already exists";
         case 112:return "Invalid input parameter";
         case 200:return "Login successful";
         case 211:return "User not found";
         case 213:return "Already logged in";
+        case 219:return "Logout failure";
+        case 220:return "Logout successful";
         case 300:return "Join room successful";
         case 313:return "Room closed";
         case 400:return "Room created successfully";
