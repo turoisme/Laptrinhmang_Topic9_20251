@@ -95,6 +95,7 @@ int handle_login(char *message, int sockfd) {
 }
 
 int handle_logout(char *message, int sockfd) {
+	printf("Log out called\n");
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=1)return FORMAT_ERROR;
@@ -105,5 +106,5 @@ int handle_logout(char *message, int sockfd) {
 			return LOGOUT_SUCCESS;
 		}
 	}
-	return LOGOUT_FAILURE;
+	return NOT_LOGGED_IN;
 }

@@ -20,7 +20,7 @@ char *parse_response(int code){
         case 200:return "Login successful";
         case 211:return "User not found";
         case 213:return "Already logged in";
-        case 219:return "Logout failure";
+        case 214:return "Have not logged in";
         case 220:return "Logout successful";
         case 300:return "Join room successful";
         case 312:return "Room not found";
