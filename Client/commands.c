@@ -13,7 +13,9 @@ int cmd_login(ClientConnection *conn, const char *username, const char *password
     snprintf(command, BUFF_SIZE, "LOGIN %s %s", username, password);
     return send_command(conn, command);
 }
-
+int cmd_logout(ClientConnection *conn) {
+    return send_command(conn, "LOGOUT");
+}
 int cmd_create_room(ClientConnection *conn, const char *room_name) {
     char command[BUFF_SIZE];
     snprintf(command, BUFF_SIZE, "CREATE_ROOM %s", room_name);

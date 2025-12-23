@@ -25,8 +25,10 @@ int handle_create_item(char *message, int sockfd) {
 	// TODO: Get room_id and owner_id from session (sockfd mapping)
 	// For now, use dummy values
 	int room_id = 1;
-	int owner_id = 1;
-	
+	int owner_id;
+	if(!is_verified_user(sockfd,&owner_id)){
+		return NOT_LOGGED_IN;
+	}
 	// Create item in database
 	int item_id = db_item_create(item_name, room_id, owner_id, 
 	                             (double)start_price, (double)buy_now_price);
@@ -44,7 +46,6 @@ int handle_list_items(int sockfd) {
 	// TODO: Get room_id from session (sockfd mapping)
 	// For now, use dummy room_id = 1
 	int room_id = 1;
-	
 	char *item_list = db_item_list_by_room(room_id);
 	
 	if (item_list) {

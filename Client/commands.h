@@ -5,6 +5,7 @@
 
 int cmd_register(ClientConnection *conn, const char *username, const char *password);
 int cmd_login(ClientConnection *conn, const char *username, const char *password);
+int cmd_logout(ClientConnection *conn);
 int cmd_create_room(ClientConnection *conn, const char *room_name);
 int cmd_join_room(ClientConnection *conn, const char *room_name);
 int cmd_leave_room(ClientConnection *conn);

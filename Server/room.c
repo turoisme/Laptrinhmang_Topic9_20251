@@ -6,6 +6,7 @@
 #include "database.h"
 #include "socket_handler.h"
 #include "ultility.h"
+#include "auth.h"
 int handle_create_room(char *message, int sockfd) {
 	char room_name[100];
 	if (sscanf(message, "CREATE_ROOM %99s", room_name) != 1) {
@@ -13,8 +14,12 @@ int handle_create_room(char *message, int sockfd) {
 	}
 	// TODO: Get user_id from session (sockfd mapping)
 	// For now, use dummy user_id = 1
-	int owner_id = 1;
-	int room_id = db_room_create(room_name, owner_id, 0, NULL);
+	int owner_id;
+	int room_id;
+	if(!is_verified_user(sockfd,&owner_id)){
+		return NOT_LOGGED_IN;
+	}
+	room_id = db_room_create(room_name, owner_id, 0, NULL);
 	if (room_id > 0) {
 		return ROOM_CREATED;
 	} else if (room_id == -2) {
@@ -33,7 +38,7 @@ int handle_join_room(char *message, int sockfd) {
 	
 	char query[512];
 	sprintf(query, "SELECT room_id FROM rooms WHERE room_id='%s'", param[1]);
-	MYSQL* conn=db_get_connection();
+	MYSQL* conn = db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	if(mysql_query(conn,query)){
 		db_release_connection(conn);

@@ -105,5 +105,5 @@ int handle_logout(char *message, int sockfd) {
 			return LOGOUT_SUCCESS;
 		}
 	}
-	return LOGOUT_FAILURE;
+	return NOT_LOGGED_IN;
 }

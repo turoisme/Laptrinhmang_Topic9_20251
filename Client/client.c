@@ -188,8 +188,14 @@ int main(int argc, char *argv[]) {
                     break;
                     
                 case 4: 
-                    is_logged_in = 0;
-                    printf("Logged out!\n");
+                     if (cmd_logout(&conn) > 0) {
+                        if (receive_response(&conn, &response) > 0) {
+                            parse_and_display_response(response);
+                            is_logged_in = 0;
+                            printf("Logged out!\n");
+                            free(response);
+                        }
+                    }
                     break;
                     
                 case 0: //
@@ -284,9 +290,14 @@ int main(int argc, char *argv[]) {
                     break;
                     
                 case 7: // logout
-                    is_logged_in = 0;
-                    is_in_room = 0;
-                    printf("Logged out!\n");
+                    if (cmd_logout(&conn) > 0) {
+                        if (receive_response(&conn, &response) > 0) {
+                            parse_and_display_response(response);
+                            is_logged_in = 0;
+                            printf("Logged out!\n");
+                            free(response);
+                        }
+                    }
                     break;
                     
                 case 0: // exit
