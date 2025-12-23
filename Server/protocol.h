@@ -18,6 +18,7 @@
 #define NOT_LOGGED_IN 214
 #define LOGOUT_SUCCESS 220
 #define JOIN_OK 300
+#define NOT_IN_ROOM 311
 #define ROOM_NOT_FOUND 312
 #define ROOM_CLOSED 313
 #define ROOM_CREATED 400
