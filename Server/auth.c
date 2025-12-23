@@ -49,19 +49,23 @@ int find_empty_slot() {
 }
 
 int handle_register(char *message, int sockfd) {
-	reset_server_auth();  //Put here to reset auth for testing purpose
-	return REGISTER_SUCCESS; //Not implemented yet
-	return FUNCTION_IN_DEV;  // Put here to remind that this function is not fully implemented
+	reset_server_auth();
 	char param[10][100];
 	int paramCount = parse_message(message, param);
 	if(paramCount!=3)return FORMAT_ERROR;
 	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
-	sprintf(query, "SELECT * FROM users WHERE username='%s' AND password='%s'", param[1], param[2]);
-	
+	sprintf(query, "INSERT INTO users (username, password) VALUES ('%s', '%s')", param[1], param[2]);
+	if(mysql_query(conn,query)){
+		db_release_connection(conn);
+		if(mysql_errno(conn)==1062){
+			return USERNAME_EXISTS;
+		}
+		return DATABASE_ERROR;
+	}
 	db_release_connection(conn);
-	
+	return REGISTER_SUCCESS;
 }
 
 int handle_login(char *message, int sockfd) {
@@ -73,7 +77,28 @@ int handle_login(char *message, int sockfd) {
 		return ALREADY_LOGGED_IN;
 	}
 	// Here should be the database verification of username and password
-	// Now we just simulate successful login
+	MYSQL* conn=db_get_connection();
+	if(!conn)return DATABASE_ERROR;
+	char query[512];
+	sprintf(query, "SELECT user_id FROM users WHERE username='%s' AND password='%s'", param[1], param[2]);
+	if(mysql_query(conn,query)){
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	MYSQL_RES* result=mysql_store_result(conn);
+	if(!result){
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	MYSQL_ROW row=mysql_fetch_row(result);
+	if(!row){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return USER_NOT_FOUND;
+	}
+	mysql_free_result(result);
+	db_release_connection(conn);
+
 	int slot=find_empty_slot();
 	if(slot<0)return SERVER_OVERLOAD;
 	verified[slot]=sockfd;
