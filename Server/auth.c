@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "auth.h"
 #include "protocol.h"
+#include "database.h"
 
 int verified[1024];             //Hard configured max 1024 users logged in
 char verify_account[1024][100]; //Should be server configurable later
@@ -21,7 +22,8 @@ int parse_message(char *message, char params[10][100]) {
 }
 
 void reset_server_auth() {
-	for(int i=0;i<1024;i++){
+	int i;
+	for(i=0;i<1024;i++){
 		verified[i]=-1;
 		strcpy(verify_account[i],"");
 	}
@@ -29,7 +31,7 @@ void reset_server_auth() {
 
 int is_verified_user(int sockfd,char *account) {
 	int i=0;
-	for(int i=0;i<1024;i++){
+	for(i=0;i<1024;i++){
 		if(verified[i]==sockfd){
 			strcpy(account,verify_account[i]);
 			return 1;
@@ -39,19 +41,21 @@ int is_verified_user(int sockfd,char *account) {
 }
 
 int find_empty_slot() {
-	for(int i=0;i<1024;i++){
+	int i;
+	for(i=0;i<1024;i++){
 		if(verified[i]==-1)return i;
 	}
 	return -1;
 }
 
 int handle_register(char *message, int sockfd) {
+	reset_server_auth();  //Put here to reset auth for testing purpose
 	return REGISTER_SUCCESS; //Not implemented yet
 	return FUNCTION_IN_DEV;  // Put here to remind that this function is not fully implemented
 	char param[10][100];
 	int paramCount = parse_message(message, param);
 	if(paramCount!=3)return FORMAT_ERROR;
-	MYSQL *conn=db_get_connection();
+	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
 	sprintf(query, "SELECT * FROM users WHERE username='%s' AND password='%s'", param[1], param[2]);
@@ -70,8 +74,8 @@ int handle_login(char *message, int sockfd) {
 	}
 	// Here should be the database verification of username and password
 	// Now we just simulate successful login
-	int slot;
-	if(slot=find_empty_slot()<0)return SERVER_OVERLOAD;
+	int slot=find_empty_slot();
+	if(slot<0)return SERVER_OVERLOAD;
 	verified[slot]=sockfd;
 	strcpy(verify_account[slot],param[1]);
 	return LOGIN_SUCCESS;
