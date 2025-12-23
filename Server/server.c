@@ -10,7 +10,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <signal.h>
-
+#include "auth.h"
 // Cleanup on exit
 void cleanup_handler(int sig) {
     printf("\nShutting down server...\n");
@@ -76,9 +76,8 @@ int main(int argc, char *argv[]) {
         perror("listen() error: ");
         exit(EXIT_FAILURE);
     }
-    
+    reset_server_auth();
     printf("Server started at the port %d\n", port);
-    
     // Step 4: Communicate with clients
     while (1) {
         conn_sock = (int *)malloc(sizeof(int));

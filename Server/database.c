@@ -247,3 +247,153 @@ void db_log_activity(int user_id, const char *action, const char *details, const
     mysql_query(conn, query);
     db_release_connection(conn);
 }
+
+// List all rooms with formatted output
+char* db_room_list_all() {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return NULL;
+    
+    char query[1024];
+    snprintf(query, sizeof(query),
+             "SELECT r.room_id, r.room_name, u.username, "
+             "(SELECT COUNT(*) FROM room_members WHERE room_id = r.room_id) as member_count, "
+             "r.is_active FROM rooms r "
+             "JOIN users u ON r.owner_id = u.user_id "
+             "ORDER BY r.room_id");
+    
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "List rooms failed: %s\n", mysql_error(conn));
+        db_release_connection(conn);
+        return NULL;
+    }
+    
+    MYSQL_RES *result = mysql_store_result(conn);
+    if (!result) {
+        db_release_connection(conn);
+        return NULL;
+    }
+    
+    // Allocate buffer for result string
+    char *output = malloc(4096);
+    if (!output) {
+        mysql_free_result(result);
+        db_release_connection(conn);
+        return NULL;
+    }
+    output[0] = '\0';
+    
+    MYSQL_ROW row;
+    int count = 0;
+    while ((row = mysql_fetch_row(result))) {
+        int room_id = atoi(row[0]);
+        char *room_name = row[1];
+        char *owner_name = row[2];
+        int member_count = atoi(row[3]);
+        int is_active = atoi(row[4]);
+        
+        char line[256];
+        snprintf(line, sizeof(line), 
+                 "Room #%d: %s (Owner: %s, Members: %d, Status: %s)\n",
+                 room_id, room_name, owner_name, member_count,
+                 is_active ? "ACTIVE" : "CLOSED");
+        strcat(output, line);
+        count++;
+    }
+    
+    if (count == 0) {
+        strcpy(output, "No rooms available");
+    }
+    
+    mysql_free_result(result);
+    db_release_connection(conn);
+    
+    return output;
+}
+
+// Create new item in room
+int db_item_create(const char *item_name, int room_id, int owner_id,
+                   double start_price, double buy_now_price) {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return -1;
+    
+    // Set expires_at to 3 minutes from now
+    char query[512];
+    snprintf(query, sizeof(query),
+             "INSERT INTO items (item_name, room_id, owner_id, start_price, "
+             "current_price, buy_now_price, status, expires_at) "
+             "VALUES ('%s', %d, %d, %.2f, %.2f, %.2f, 'INQUEUE', "
+             "DATE_ADD(NOW(), INTERVAL 3 MINUTE))",
+             item_name, room_id, owner_id, start_price, start_price, buy_now_price);
+    
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "Create item failed: %s\n", mysql_error(conn));
+        db_release_connection(conn);
+        return -1;
+    }
+    
+    int item_id = mysql_insert_id(conn);
+    db_release_connection(conn);
+    
+    return item_id;
+}
+
+// List all items in a room with formatted output
+char* db_item_list_by_room(int room_id) {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return NULL;
+    
+    char query[1024];
+    snprintf(query, sizeof(query),
+             "SELECT i.item_id, i.item_name, i.start_price, i.current_price, "
+             "i.buy_now_price, i.status FROM items i "
+             "WHERE i.room_id = %d ORDER BY i.item_id",
+             room_id);
+    
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "List items failed: %s\n", mysql_error(conn));
+        db_release_connection(conn);
+        return NULL;
+    }
+    
+    MYSQL_RES *result = mysql_store_result(conn);
+    if (!result) {
+        db_release_connection(conn);
+        return NULL;
+    }
+    
+    // Allocate buffer for result string
+    char *output = malloc(4096);
+    if (!output) {
+        mysql_free_result(result);
+        db_release_connection(conn);
+        return NULL;
+    }
+    output[0] = '\0';
+    
+    MYSQL_ROW row;
+    int count = 0;
+    while ((row = mysql_fetch_row(result))) {
+        int item_id = atoi(row[0]);
+        char *item_name = row[1];
+        double start_price = atof(row[2]);
+        double current_price = atof(row[3]);
+        double buy_now_price = atof(row[4]);
+        char *status = row[5];
+        
+        char line[256];
+        snprintf(line, sizeof(line), 
+                 "Item #%d: %s (Start: $%.2f, Current: $%.2f, BuyNow: $%.2f, Status: %s)\n",
+                 item_id, item_name, start_price, current_price, buy_now_price, status);
+        strcat(output, line);
+        count++;
+    }
+    
+    if (count == 0) {
+        strcpy(output, "No items in this room");
+    }
+    
+    mysql_free_result(result);
+    db_release_connection(conn);
+    
+    return output;
+}

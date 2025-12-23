@@ -26,10 +26,13 @@ char *parse_response(int code){
         case 312:return "Room not found";
         case 313:return "Room closed";
         case 400:return "Room created successfully";
+        case 411:return "Room already exists";
+        case 500:return "Room list";
         case 600:return "Item created successfully";
         case 620:return "Item deleted successfully";
         case 621:return "Item already sold";
         case 622:return "Access denied";
+        case 700:return "Item list";
         case 721:return "Went into another room";
         case 800:return "Bid successful";
         case 811:return "Bid too low";

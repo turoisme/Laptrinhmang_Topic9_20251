@@ -4,9 +4,9 @@
 #include "room.h"
 #include "protocol.h"
 #include "database.h"
+<<<<<<< HEAD
 #include "socket_handler.h"
-#include "ultility.h"
-#include "auth.h"
+
 int handle_create_room(char *message, int sockfd) {
 	char room_name[100];
 	if (sscanf(message, "CREATE_ROOM %99s", room_name) != 1) {
@@ -14,12 +14,8 @@ int handle_create_room(char *message, int sockfd) {
 	}
 	// TODO: Get user_id from session (sockfd mapping)
 	// For now, use dummy user_id = 1
-	int owner_id;
-	int room_id;
-	if(!is_verified_user(sockfd,&owner_id)){
-		return NOT_LOGGED_IN;
-	}
-	room_id = db_room_create(room_name, owner_id, 0, NULL);
+	int owner_id = 1;
+x	int room_id = db_room_create(room_name, owner_id, 0, NULL);
 	if (room_id > 0) {
 		return ROOM_CREATED;
 	} else if (room_id == -2) {
@@ -27,7 +23,13 @@ int handle_create_room(char *message, int sockfd) {
 	} else {
 		return DATABASE_ERROR;
 	}
+=======
+#include "ultility.h"
+
+int handle_create_room(char *message, int sockfd) {
+	return FUNCTION_IN_DEV;
 }
+
 int handle_join_room(char *message, int sockfd) {
 	char *param[10][100];
 	int param_count=parse_message(message, param);
@@ -35,22 +37,31 @@ int handle_join_room(char *message, int sockfd) {
 		return FORMAT_ERROR;
 	}
 	int account;
-	if(!is_verified_user(sockfd,&account)){
-		return NOT_LOGGED_IN;
-	}
+	
+	char query[512];
+	sprintf(query, "SELECT room_id FROM rooms WHERE room_id='%s'", param[1]);
 	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
-	char query[512];
-	sprintf(query, "INSERT INTO room_members (room_id, user_id) VALUES ('%s', %d)", param[1], account);
 	if(mysql_query(conn,query)){
 		db_release_connection(conn);
-		if(mysql_errno(conn)==1452){
-			return ROOM_NOT_FOUND;
-		}
 		return DATABASE_ERROR;
 	}
+	MYSQL_RES* result=mysql_store_result(conn);
+	if(!result){
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	MYSQL_ROW row=mysql_fetch_row(result);
+	if(!row){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return ROOM_NOT_FOUND;
+	}
+
+	mysql_free_result(result);
 	db_release_connection(conn);
 	return JOIN_OK;
+>>>>>>> 5a0b4b6bce360cf209e0bfd026074876ec99c481
 }
 
 int handle_list_rooms(int sockfd) {
@@ -67,30 +78,11 @@ int handle_list_rooms(int sockfd) {
 		return DATABASE_ERROR;
 	}
 }
+int handle_join_room(char *message, int sockfd) {
+	return FUNCTION_IN_DEV;
+}
 int handle_leave_room(char *message, int sockfd) {
-	char param[10][100];
-	int param_count=parse_message(message, param);
-	if(param_count!=1){
-		return FORMAT_ERROR;
-	}
-	MYSQL* conn=db_get_connection();
-	if(!conn)return DATABASE_ERROR;
-	int account;
-	if(!is_verified_user(sockfd,&account)){
-		db_release_connection(conn);
-		return NOT_LOGGED_IN;
-	}
-	char query[512];
-	sprintf(query, "DELETE FROM room_members WHERE room_id='%s' AND user_id=%d", param[1], account);
-	if(mysql_query(conn,query)){
-		db_release_connection(conn);
-		if(mysql_errno(conn)==1452){
-			return ROOM_NOT_FOUND;
-		}
-		return DATABASE_ERROR;
-	}
-	db_release_connection(conn);
-	return LEAVE_SUCCESS;
+	return FUNCTION_IN_DEV;
 }
 
 int handle_bid(char *message, int sockfd) {
