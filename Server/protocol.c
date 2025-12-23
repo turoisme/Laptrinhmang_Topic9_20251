@@ -23,6 +23,7 @@ char *parse_response(int code){
         case 219:return "Logout failure";
         case 220:return "Logout successful";
         case 300:return "Join room successful";
+        case 312:return "Room not found";
         case 313:return "Room closed";
         case 400:return "Room created successfully";
         case 600:return "Item created successfully";

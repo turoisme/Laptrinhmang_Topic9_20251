@@ -7,21 +7,21 @@
 #include "ultility.h"
 
 int verified[1024];             //Hard configured max 1024 users logged in
-char verify_account[1024][100]; //Should be server configurable later
+int verify_account[1024];       //Should be server configurable later
 
 void reset_server_auth() {
 	int i;
 	for(i=0;i<1024;i++){
 		verified[i]=-1;
-		strcpy(verify_account[i],"");
+		verify_account[i]=-1;
 	}
 }
 
-int is_verified_user(int sockfd,char *account) {
+int is_verified_user(int sockfd,int *account) {
 	int i=0;
 	for(i=0;i<1024;i++){
 		if(verified[i]==sockfd){
-			strcpy(account,verify_account[i]);
+			*account=verify_account[i];
 			return 1;
 		}
 	}
@@ -37,10 +37,10 @@ int find_empty_slot() {
 }
 
 int handle_register(char *message, int sockfd) {
-	reset_server_auth();
+	reset_server_auth(); // For testing purpose only, remove this line in production
 	char param[10][100];
-	int paramCount = parse_message(message, param);
-	if(paramCount!=3)return FORMAT_ERROR;
+	int param_count = parse_message(message, param);
+	if(param_count!=3)return FORMAT_ERROR;
 	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
@@ -58,10 +58,10 @@ int handle_register(char *message, int sockfd) {
 
 int handle_login(char *message, int sockfd) {
 	char param[10][100];
-	int paramCount = parse_message(message, param);
-	if(paramCount!=3)return FORMAT_ERROR;
-	char account[100];
-	if(is_verified_user(sockfd,account)){
+	int param_count = parse_message(message, param);
+	if(param_count!=3)return FORMAT_ERROR;
+	int account;
+	if(is_verified_user(sockfd,&account)){
 		return ALREADY_LOGGED_IN;
 	}
 	// Here should be the database verification of username and password
@@ -90,18 +90,18 @@ int handle_login(char *message, int sockfd) {
 	int slot=find_empty_slot();
 	if(slot<0)return SERVER_OVERLOAD;
 	verified[slot]=sockfd;
-	strcpy(verify_account[slot],param[1]);
+	verify_account[slot]=atoi(param[1]);
 	return LOGIN_SUCCESS;
 }
 
 int handle_logout(char *message, int sockfd) {
 	char param[10][100];
-	int paramCount = parse_message(message, param);
-	if(paramCount!=1)return FORMAT_ERROR;
+	int param_count = parse_message(message, param);
+	if(param_count!=1)return FORMAT_ERROR;
 	for(int i=0;i<1024;i++){
 		if(verified[i]==sockfd){
 			verified[i]=-1;
-			strcpy(verify_account[i],"");
+			verify_account[i]=-1;
 			return LOGOUT_SUCCESS;
 		}
 	}
