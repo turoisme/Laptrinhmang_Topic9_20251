@@ -70,9 +70,6 @@ int handle_list_rooms(int sockfd) {
 		return DATABASE_ERROR;
 	}
 }
-int handle_join_room(char *message, int sockfd) {
-	return FUNCTION_IN_DEV;
-}
 int handle_leave_room(char *message, int sockfd) {
 	return FUNCTION_IN_DEV;
 }
