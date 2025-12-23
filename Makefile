@@ -15,7 +15,8 @@ SERVER_SOURCES = $(SERVER_DIR)/server.c \
                  $(SERVER_DIR)/protocol.c \
                  $(SERVER_DIR)/database.c \
                  $(SERVER_DIR)/logger.c \
-                 $(SERVER_DIR)/thread_pool.c
+                 $(SERVER_DIR)/thread_pool.c \
+                 $(SERVER_DIR)/ultility.c
 
 SERVER_OBJECTS = $(SERVER_SOURCES:.c=.o)
 SERVER_TARGET = run_server

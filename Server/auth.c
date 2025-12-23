@@ -4,22 +4,10 @@
 #include "auth.h"
 #include "protocol.h"
 #include "database.h"
+#include "ultility.h"
 
 int verified[1024];             //Hard configured max 1024 users logged in
 char verify_account[1024][100]; //Should be server configurable later
-
-// This can be an ultility function to parse messages for all handlers
-// Consider make a new ultility.c file later
-int parse_message(char *message, char params[10][100]) {
-	int paramCount = 0;
-	char *token = strtok(message, " ");
-	while (token != NULL && paramCount < 10) {
-		strcpy(params[paramCount], token);
-		paramCount++;
-		token = strtok(NULL, " ");
-	}
-	return paramCount;
-}
 
 void reset_server_auth() {
 	int i;
@@ -104,7 +92,6 @@ int handle_login(char *message, int sockfd) {
 	verified[slot]=sockfd;
 	strcpy(verify_account[slot],param[1]);
 	return LOGIN_SUCCESS;
-	return FUNCTION_IN_DEV; // Put here to remind that this function is not fully implemented
 }
 
 int handle_logout(char *message, int sockfd) {
