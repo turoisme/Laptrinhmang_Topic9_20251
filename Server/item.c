@@ -7,7 +7,6 @@
 #include "protocol.h"
 #include "database.h"
 #include "socket_handler.h"
-#include "auth.h"
 
 int handle_create_item(char *message, int sockfd) {
 	char item_name[100];
@@ -23,15 +22,13 @@ int handle_create_item(char *message, int sockfd) {
 		return INVALID_INPUT_PARAMETER;
 	}
 	
-	// Get owner_id and room_id from session
-	int owner_id, room_id;
-	if(!is_verified_user(sockfd, &owner_id)){
+	// TODO: Get room_id and owner_id from session (sockfd mapping)
+	// For now, use dummy values
+	int room_id = 1;
+	int owner_id;
+	if(!is_verified_user(sockfd,&owner_id)){
 		return NOT_LOGGED_IN;
 	}
-	if(!get_user_room(sockfd, &room_id) || room_id < 0){
-		return NOT_IN_ROOM;
-	}
-	
 	// Create item in database
 	int item_id = db_item_create(item_name, room_id, owner_id, 
 	                             (double)start_price, (double)buy_now_price);
@@ -46,15 +43,9 @@ int handle_create_item(char *message, int sockfd) {
 }
 
 int handle_list_items(int sockfd) {
-	// Get room_id from session
-	int owner_id, room_id;
-	if(!is_verified_user(sockfd, &owner_id)){
-		return NOT_LOGGED_IN;
-	}
-	if(!get_user_room(sockfd, &room_id) || room_id < 0){
-		return NOT_IN_ROOM;
-	}
-	
+	// TODO: Get room_id from session (sockfd mapping)
+	// For now, use dummy room_id = 1
+	int room_id = 1;
 	char *item_list = db_item_list_by_room(room_id);
 	
 	if (item_list) {
