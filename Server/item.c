@@ -59,34 +59,6 @@ int handle_list_items(int sockfd) {
 	}
 }
 int handle_delete_item(char *message, int sockfd) {
-	char item_name[100];
-	int start_price, buy_now_price;
-	
-	// Parse: CREATE_ITEM item_name start_price buy_now_price
-	if (sscanf(message, "CREATE_ITEM %99s %d %d", item_name, &start_price, &buy_now_price) != 3) {
-		return FORMAT_ERROR;
-	}
-	
-	// Validate prices
-	if (start_price <= 0 || buy_now_price <= 0 || buy_now_price <= start_price) {
-		return INVALID_INPUT_PARAMETER;
-	}
-	
-	// TODO: Get room_id and owner_id from session (sockfd mapping)
-	// For now, use dummy values
-	int room_id = 1;
-	int owner_id = 1;
-	
-	// Create item in database
-	int item_id = db_item_create(item_name, room_id, owner_id, 
-	                             (double)start_price, (double)buy_now_price);
-	
-	if (item_id > 0) {
-		// Item created successfully
-		return ITEM_CREATED;
-	} else {
-		// Database error
-		return DATABASE_ERROR;
-	}
+
 }
 
