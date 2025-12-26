@@ -84,13 +84,16 @@ int handle_login(char *message, int sockfd) {
 		db_release_connection(conn);
 		return USER_NOT_FOUND;
 	}
+	
+	// Get user_id from result
+	int user_id = atoi(row[0]);
 	mysql_free_result(result);
 	db_release_connection(conn);
 
 	int slot=find_empty_slot();
 	if(slot<0)return SERVER_OVERLOAD;
 	verified[slot]=sockfd;
-	verify_account[slot]=atoi(param[1]);
+	verify_account[slot]=user_id;
 	return LOGIN_SUCCESS;
 }
 

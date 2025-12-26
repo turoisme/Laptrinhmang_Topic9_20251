@@ -234,6 +234,48 @@ int db_room_join(int room_id, int user_id) {
     return result == 0 ? 0 : -1;
 }
 
+// Leave room
+int db_room_leave(int room_id, int user_id) {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return -1;
+    
+    char query[512];
+    snprintf(query, sizeof(query),
+             "DELETE FROM room_members WHERE room_id=%d AND user_id=%d",
+             room_id, user_id);
+    
+    int result = mysql_query(conn, query);
+    db_release_connection(conn);
+    
+    return result == 0 ? 0 : -1;
+}
+
+// Get current room of user
+int db_user_get_current_room(int user_id) {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return 0;
+    
+    char query[512];
+    snprintf(query, sizeof(query),
+             "SELECT room_id FROM room_members WHERE user_id=%d ORDER BY joined_at DESC LIMIT 1",
+             user_id);
+    
+    if (mysql_query(conn, query)) {
+        db_release_connection(conn);
+        return 0;
+    }
+    
+    MYSQL_RES *result = mysql_store_result(conn);
+    MYSQL_ROW row = mysql_fetch_row(result);
+    
+    int room_id = row ? atoi(row[0]) : 0;
+    
+    mysql_free_result(result);
+    db_release_connection(conn);
+    
+    return room_id;
+}
+
 // Log activity
 void db_log_activity(int user_id, const char *action, const char *details, const char *ip) {
     MYSQL *conn = db_get_connection();
