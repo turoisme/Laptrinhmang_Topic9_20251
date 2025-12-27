@@ -8,7 +8,7 @@
 
 int verified[1024];             //Hard configured max 1024 users logged in
 int verify_account[1024];       //Should be server configurable later
-
+// Reset authentication state
 void reset_server_auth() {
 	int i;
 	for(i=0;i<1024;i++){
@@ -16,7 +16,7 @@ void reset_server_auth() {
 		verify_account[i]=-1;
 	}
 }
-
+// Check if user is verified
 int is_verified_user(int sockfd,int *account) {
 	int i=0;
 	for(i=0;i<1024;i++){
@@ -27,7 +27,7 @@ int is_verified_user(int sockfd,int *account) {
 	}
 	return 0;
 }
-
+// Find empty slot for new login
 int find_empty_slot() {
 	int i;
 	for(i=0;i<1024;i++){
@@ -37,10 +37,11 @@ int find_empty_slot() {
 }
 
 int handle_register(char *message, int sockfd) {
-	reset_server_auth(); // For testing purpose only, remove this line in production
+	// Parse parameters
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=3)return FORMAT_ERROR;
+	// Insert new user into database
 	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
@@ -57,6 +58,7 @@ int handle_register(char *message, int sockfd) {
 }
 
 int handle_login(char *message, int sockfd) {
+	// Parse parameters
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=3)return FORMAT_ERROR;
@@ -64,7 +66,7 @@ int handle_login(char *message, int sockfd) {
 	if(is_verified_user(sockfd,&account)){
 		return ALREADY_LOGGED_IN;
 	}
-	// Here should be the database verification of username and password
+	// Search user in database
 	MYSQL* conn=db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
@@ -89,7 +91,7 @@ int handle_login(char *message, int sockfd) {
 	int user_id = atoi(row[0]);
 	mysql_free_result(result);
 	db_release_connection(conn);
-
+	// Assign to verified list
 	int slot=find_empty_slot();
 	if(slot<0)return SERVER_OVERLOAD;
 	verified[slot]=sockfd;
@@ -98,9 +100,11 @@ int handle_login(char *message, int sockfd) {
 }
 
 int handle_logout(char *message, int sockfd) {
+	// Parse parameters
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=1)return FORMAT_ERROR;
+	// Remove from verified list
 	for(int i=0;i<1024;i++){
 		if(verified[i]==sockfd){
 			verified[i]=-1;

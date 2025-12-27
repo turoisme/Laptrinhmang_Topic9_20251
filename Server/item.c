@@ -7,6 +7,8 @@
 #include "protocol.h"
 #include "database.h"
 #include "socket_handler.h"
+#include "ultility.h"
+#include "auth.h"
 
 int handle_create_item(char *message, int sockfd) {
 	char item_name[100];
@@ -74,6 +76,61 @@ int handle_list_items(int sockfd) {
 	}
 }
 int handle_delete_item(char *message, int sockfd) {
-
+	// Search for verified user
+	int account;
+	if(!is_verified_user(sockfd, &account)){
+		return NOT_LOGGED_IN;
+	}
+	// Parse parameters
+	char param[10][100];
+	int param_count=parse_message(message, param);
+	if(param_count!=2){
+		return FORMAT_ERROR;
+	}
+	MYSQL* conn = db_get_connection();
+	if(!conn){
+		return DATABASE_ERROR;
+	}
+	char query[512];
+	sprintf(query, "SELECT item_id,is_sold,owner_id FROM items WHERE item_name='%s'",param[1]);
+	if(mysql_query(conn,query)){
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	MYSQL_RES* result=mysql_store_result(conn);
+	if(!result){
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	MYSQL_ROW row=mysql_fetch_row(result);
+	if(!row){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return ITEM_NOT_FOUND;
+	}
+	// Get item details, check status
+	int item_id = atoi(row[0]);
+	int is_sold = atoi(row[1]);
+	int owner_id = atoi(row[2]);
+	if(owner_id!=account){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return ACCESS_DENIED;
+	}
+	if(is_sold){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return ITEM_ALREADY_SOLD;
+	}
+	// Delete item from database
+	sprintf(query, "DELETE FROM items WHERE item_id='%d'", item_id);
+	if(mysql_query(conn,query)){
+		mysql_free_result(result);
+		db_release_connection(conn);
+		return DATABASE_ERROR;
+	}
+	mysql_free_result(result);
+	db_release_connection(conn);
+	return ITEM_DELETED;
 }
 
