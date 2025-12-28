@@ -44,6 +44,10 @@ int send_command(ClientConnection *conn, const char *command) {
         fprintf(stderr, "Not connected to server\n");
         return -1;
     }
+    
+    // Debug: print command being sent
+    printf("DEBUG - Sending command: %s\n", command);
+    
     char message[BUFF_SIZE];
     int msg_len = snprintf(message, BUFF_SIZE, "%s%s", command, DELIMITER);
     int total_sent = 0;

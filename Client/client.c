@@ -171,6 +171,11 @@ int main(int argc, char *argv[]) {
                                 if (code == JOIN_OK) {
                                     is_in_room = 1;
                                     printf("You joined the room!\n");
+                                    // Start notification thread
+                                    if (!is_notification_running()) {
+                                        start_notification_thread(&conn);
+                                        printf("[Notification system started]\n");
+                                    }
                                 }
                             }
                             free(response);
@@ -192,7 +197,10 @@ int main(int argc, char *argv[]) {
                         if (receive_response(&conn, &response) > 0) {
                             parse_and_display_response(response);
                             is_logged_in = 0;
+                            is_in_room = 0;
                             printf("Logged out!\n");
+                            // Stop notification thread
+                            stop_notification_thread();
                             free(response);
                         }
                     }
@@ -284,6 +292,8 @@ int main(int argc, char *argv[]) {
                             parse_and_display_response(response);
                             is_in_room = 0;
                             printf("You left the room!\n");
+                            // Stop notification thread
+                            stop_notification_thread();
                             free(response);
                         }
                     }
@@ -294,7 +304,10 @@ int main(int argc, char *argv[]) {
                         if (receive_response(&conn, &response) > 0) {
                             parse_and_display_response(response);
                             is_logged_in = 0;
+                            is_in_room = 0;
                             printf("Logged out!\n");
+                            // Stop notification thread
+                            stop_notification_thread();
                             free(response);
                         }
                     }

@@ -39,6 +39,7 @@ int db_room_join(int room_id, int user_id);
 int db_room_leave(int room_id, int user_id);
 int db_room_is_owner(int room_id, int user_id);
 int db_user_get_current_room(int user_id);
+int db_user_leave_all_rooms(int user_id);
 char* db_room_list_all();
 
 // Item operations

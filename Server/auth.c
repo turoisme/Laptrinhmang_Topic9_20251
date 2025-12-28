@@ -104,8 +104,21 @@ int handle_logout(char *message, int sockfd) {
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=1)return FORMAT_ERROR;
-	//Leave room if in one
-	handle_leave_room("LEAVE_ROOM\0",sockfd);
+	
+	// Get user_id before removing from verified list
+	int user_id = -1;
+	for(int i=0;i<1024;i++){
+		if(verified[i]==sockfd){
+			user_id = verify_account[i];
+			break;
+		}
+	}
+	
+	if(user_id < 0) return NOT_LOGGED_IN;
+	
+	// Clear user from all rooms
+	db_user_leave_all_rooms(user_id);
+	
 	// Remove from verified list
 	for(int i=0;i<1024;i++){
 		if(verified[i]==sockfd){

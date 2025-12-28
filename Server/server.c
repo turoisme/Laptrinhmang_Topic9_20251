@@ -5,6 +5,7 @@
 #include "socket_handler.h"
 #include "thread_pool.h"
 #include "database.h"
+#include "auction_timer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +15,7 @@
 // Cleanup on exit
 void cleanup_handler(int sig) {
     printf("\nShutting down server...\n");
+    stop_auction_timer();
     db_cleanup();
     exit(0);
 }
@@ -52,6 +54,9 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     printf("Database connected successfully!\n");
+    
+    // Start auction timer thread
+    start_auction_timer();
     
     // Step 1: Construct a TCP socket to listen connection request
     if ((listen_sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {

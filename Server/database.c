@@ -276,6 +276,26 @@ int db_user_get_current_room(int user_id) {
     return room_id;
 }
 
+// Leave all rooms for a user (used on logout/disconnect)
+int db_user_leave_all_rooms(int user_id) {
+    MYSQL *conn = db_get_connection();
+    if (!conn) return -1;
+    
+    char query[256];
+    snprintf(query, sizeof(query),
+             "DELETE FROM room_members WHERE user_id = %d",
+             user_id);
+    
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "Leave all rooms failed: %s\n", mysql_error(conn));
+        db_release_connection(conn);
+        return -1;
+    }
+    
+    db_release_connection(conn);
+    return 0;
+}
+
 // Log activity
 void db_log_activity(int user_id, const char *action, const char *details, const char *ip) {
     MYSQL *conn = db_get_connection();
@@ -362,8 +382,8 @@ int db_item_create(const char *item_name, int room_id, int owner_id,
     char query[512];
     snprintf(query, sizeof(query),
              "INSERT INTO items (item_name, room_id, owner_id, start_price, "
-             "current_price, buy_now_price, status, expires_at) "
-             "VALUES ('%s', %d, %d, %.2f, %.2f, %.2f, 'INQUEUE', "
+             "current_price, buy_now_price, expires_at) "
+             "VALUES ('%s', %d, %d, %.2f, %.2f, %.2f, "
              "DATE_ADD(NOW(), INTERVAL 3 MINUTE))",
              item_name, room_id, owner_id, start_price, start_price, buy_now_price);
     
@@ -387,7 +407,9 @@ char* db_item_list_by_room(int room_id) {
     char query[1024];
     snprintf(query, sizeof(query),
              "SELECT i.item_id, i.item_name, i.start_price, i.current_price, "
-             "i.buy_now_price, i.status FROM items i "
+             "i.buy_now_price, i.is_sold, "
+             "TIMESTAMPDIFF(SECOND, NOW(), i.expires_at) as remaining "
+             "FROM items i "
              "WHERE i.room_id = %d ORDER BY i.item_id",
              room_id);
     
@@ -420,12 +442,26 @@ char* db_item_list_by_room(int room_id) {
         double start_price = atof(row[2]);
         double current_price = atof(row[3]);
         double buy_now_price = atof(row[4]);
-        char *status = row[5];
+        int is_sold = atoi(row[5]);
+        int remaining = row[6] ? atoi(row[6]) : 0;
         
-        char line[256];
-        snprintf(line, sizeof(line), 
-                 "Item #%d: %s (Start: $%.2f, Current: $%.2f, BuyNow: $%.2f, Status: %s)\n",
-                 item_id, item_name, start_price, current_price, buy_now_price, status);
+        char line[300];
+        if (is_sold) {
+            snprintf(line, sizeof(line), 
+                     "Item #%d: %s (Start: $%.2f, Final: $%.2f, BuyNow: $%.2f) [SOLD]\n",
+                     item_id, item_name, start_price, current_price, buy_now_price);
+        } else if (remaining > 0) {
+            int minutes = remaining / 60;
+            int seconds = remaining % 60;
+            snprintf(line, sizeof(line), 
+                     "Item #%d: %s (Start: $%.2f, Current: $%.2f, BuyNow: $%.2f) [%dm %ds left]\n",
+                     item_id, item_name, start_price, current_price, buy_now_price,
+                     minutes, seconds);
+        } else {
+            snprintf(line, sizeof(line), 
+                     "Item #%d: %s (Start: $%.2f, Current: $%.2f, BuyNow: $%.2f) [EXPIRED]\n",
+                     item_id, item_name, start_price, current_price, buy_now_price);
+        }
         strcat(output, line);
         count++;
     }
