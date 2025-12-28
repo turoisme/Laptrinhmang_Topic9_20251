@@ -104,6 +104,8 @@ int handle_logout(char *message, int sockfd) {
 	char param[10][100];
 	int param_count = parse_message(message, param);
 	if(param_count!=1)return FORMAT_ERROR;
+	//Leave room if in one
+	handle_leave_room("LEAVE_ROOM\0",sockfd);
 	// Remove from verified list
 	for(int i=0;i<1024;i++){
 		if(verified[i]==sockfd){

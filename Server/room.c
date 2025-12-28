@@ -85,12 +85,14 @@ int handle_join_room(char *message, int sockfd) {
 		db_release_connection(conn);
 		return ROOM_CLOSED;
 	}
-	mysql_free_result(result);
-	db_release_connection(conn);
 	// Join room in database
-	if (db_room_join(room_id, account) != 0) {
+	sprintf(query, "INSERT INTO room_members (room_id, user_id) VALUES ('%d', '%d')", room_id, account);
+	if(mysql_query(conn,query)){
+		db_release_connection(conn);
 		return DATABASE_ERROR;
 	}
+	mysql_free_result(result);
+	db_release_connection(conn);
 	return JOIN_OK;
 }
 
