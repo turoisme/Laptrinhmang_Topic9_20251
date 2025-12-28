@@ -19,10 +19,6 @@ int handle_create_room(char *message, int sockfd) {
 	}
 	room_id = db_room_create(room_name, owner_id, 0, NULL);
 	if (room_id > 0) {
-		// Automatically join the owner to the room
-		if (db_room_join(room_id, owner_id) != 0) {
-			return DATABASE_ERROR;
-		}
 		return ROOM_CREATED;
 	} else if (room_id == -2) {
 		return ROOM_EXISTS;
@@ -43,8 +39,9 @@ int handle_join_room(char *message, int sockfd) {
 	MYSQL* conn = db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
-	//Check if user is already in a room
-	sprintf(query, "SELECT room_id FROM room_members WHERE user_id='%d'", account);
+	
+	// Get room ID and check if active
+	sprintf(query, "SELECT room_id,is_active FROM rooms WHERE room_name='%s'", param[1]);
 	if(mysql_query(conn,query)){
 		db_release_connection(conn);
 		return DATABASE_ERROR;
@@ -55,23 +52,6 @@ int handle_join_room(char *message, int sockfd) {
 		return DATABASE_ERROR;
 	}
 	MYSQL_ROW row=mysql_fetch_row(result);
-	if(row){
-		mysql_free_result(result);
-		db_release_connection(conn);
-		return WENT_INTO_ANOTHER_ROOM;
-	}
-	// Get room ID and check if active
-	sprintf(query, "SELECT room_id,is_active FROM rooms WHERE room_name='%s'", param[1]);
-	if(mysql_query(conn,query)){
-		db_release_connection(conn);
-		return DATABASE_ERROR;
-	}
-	result=mysql_store_result(conn);
-	if(!result){
-		db_release_connection(conn);
-		return DATABASE_ERROR;
-	}
-	row=mysql_fetch_row(result);
 	if(!row){
 		mysql_free_result(result);
 		db_release_connection(conn);
@@ -91,6 +71,26 @@ int handle_join_room(char *message, int sockfd) {
 	if (db_room_join(room_id, account) != 0) {
 		return DATABASE_ERROR;
 	}
+	
+	// Get username for notification
+	conn = db_get_connection();
+	if (conn) {
+		sprintf(query, "SELECT username FROM users WHERE user_id=%d", account);
+		if (mysql_query(conn, query) == 0) {
+			result = mysql_store_result(conn);
+			if (result) {
+				row = mysql_fetch_row(result);
+				if (row) {
+					char notify_msg[256];
+					snprintf(notify_msg, sizeof(notify_msg), "%s joined %s", row[0], param[1]);
+					broadcast_to_room(room_id, sockfd, NOTIFY_USER_JOIN, notify_msg);
+				}
+				mysql_free_result(result);
+			}
+		}
+		db_release_connection(conn);
+	}
+	
 	return JOIN_OK;
 }
 
@@ -103,7 +103,8 @@ int handle_list_rooms(int sockfd) {
 		snprintf(response, sizeof(response), "500 %s", room_list);
 		send_message(sockfd, response);
 		free(room_list);
-		return LIST_ROOMS_SUCCESS;
+		// Return 0 to indicate we already sent the response
+		return 0;
 	} else {
 		return DATABASE_ERROR;
 	}
@@ -140,12 +141,51 @@ int handle_leave_room(char *message, int sockfd) {
 	}
 	int room_id = atoi(row[0]);
 	mysql_free_result(result);	
+	
+	// Get username for notification
+	char username[100] = "";
+	sprintf(query, "SELECT username FROM users WHERE user_id='%d'", account);
+	if (mysql_query(conn, query) == 0) {
+		result = mysql_store_result(conn);
+		if (result) {
+			row = mysql_fetch_row(result);
+			if (row) {
+				strncpy(username, row[0], sizeof(username)-1);
+			}
+			mysql_free_result(result);
+		}
+	}
+	
+	// Get room name for notification
+	char room_name[100] = "";
+	sprintf(query, "SELECT room_name FROM rooms WHERE room_id=%d", room_id);
+	if (mysql_query(conn, query) == 0) {
+		result = mysql_store_result(conn);
+		if (result) {
+			row = mysql_fetch_row(result);
+			if (row) {
+				strncpy(room_name, row[0], sizeof(room_name)-1);
+			}
+			mysql_free_result(result);
+		}
+	}
+	
+	// Delete from room_members FIRST (before broadcast)
 	sprintf(query, "DELETE FROM room_members WHERE user_id='%d' AND room_id='%d'", account, room_id);
 	if(mysql_query(conn,query)){
 		db_release_connection(conn);
 		return DATABASE_ERROR;
 	}
+	
+	// Broadcast AFTER leaving (to remaining members only)
+	if (username[0] && room_name[0]) {
+		char notify_msg[256];
+		snprintf(notify_msg, sizeof(notify_msg), "%s left %s", username, room_name);
+		broadcast_to_room(room_id, sockfd, NOTIFY_USER_LEAVE, notify_msg);
+	}
+	
 	db_release_connection(conn);
+	
 	return LEAVE_SUCCESS;
 }
 
@@ -202,14 +242,38 @@ int handle_bid(char *message, int sockfd) {
 	// Might need to do something if bid_price >= buy_now_price
 
 	// Update bid in database
-	sprintf(query, "UPDATE items SET current_price='%.2f', bidder='%d' WHERE item_id='%d'", bid_price, account, item_id);
+	sprintf(query, "UPDATE items SET current_price='%.2f', current_bidder_id='%d' WHERE item_id='%d'", bid_price, account, item_id);
 	if(mysql_query(conn,query)){
 		mysql_free_result(result);
 		db_release_connection(conn);
 		return DATABASE_ERROR;
 	}
 	mysql_free_result(result);
+	
+	// Get room_id and username for notification
+	int room_id = db_user_get_current_room(account);
+	char username[100] = "";
+	sprintf(query, "SELECT username FROM users WHERE user_id=%d", account);
+	if (mysql_query(conn, query) == 0) {
+		result = mysql_store_result(conn);
+		if (result) {
+			row = mysql_fetch_row(result);
+			if (row) {
+				strncpy(username, row[0], sizeof(username)-1);
+			}
+			mysql_free_result(result);
+		}
+	}
 	db_release_connection(conn);
+	
+	// Broadcast bid notification
+	if (room_id > 0 && username[0]) {
+		char notify_msg[256];
+		snprintf(notify_msg, sizeof(notify_msg), 
+		        "%s bid $%.2f on %s", username, bid_price, param[1]);
+		broadcast_to_room(room_id, sockfd, NOTIFY_BID, notify_msg);
+	}
+	
 	return BID_OK;
 }
 
@@ -255,14 +319,38 @@ int handle_buy(char *message, int sockfd) {
 		db_release_connection(conn);
 		return ITEM_ALREADY_SOLD_BUY;
 	}
-	// Update item as sold in database
-	sprintf(query, "UPDATE items SET is_sold=1, buyer='%d' WHERE item_id='%d'", account, item_id);
+	// Update item as sold in database (no buyer column, just mark sold)
+	sprintf(query, "UPDATE items SET is_sold=1, current_bidder_id='%d' WHERE item_id='%d'", account, item_id);
 	if(mysql_query(conn,query)){
 		mysql_free_result(result);
 		db_release_connection(conn);
 		return DATABASE_ERROR;
 	}
 	mysql_free_result(result);
+	
+	// Get room_id and username for notification
+	int room_id = db_user_get_current_room(account);
+	char username[100] = "";
+	sprintf(query, "SELECT username FROM users WHERE user_id=%d", account);
+	if (mysql_query(conn, query) == 0) {
+		result = mysql_store_result(conn);
+		if (result) {
+			row = mysql_fetch_row(result);
+			if (row) {
+				strncpy(username, row[0], sizeof(username)-1);
+			}
+			mysql_free_result(result);
+		}
+	}
 	db_release_connection(conn);
+	
+	// Broadcast buy notification
+	if (room_id > 0 && username[0]) {
+		char notify_msg[256];
+		snprintf(notify_msg, sizeof(notify_msg), 
+		        "%s bought item: %s", username, param[1]);
+		broadcast_to_room(room_id, sockfd, NOTIFY_BUY, notify_msg);
+	}
+	
 	return BUY_OK;
 }

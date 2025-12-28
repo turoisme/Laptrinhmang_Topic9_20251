@@ -7,6 +7,7 @@
 #include "connection.h"
 #include "commands.h"
 #include "response_handler.h"
+#include "notification.h"
 
 //function
 void print_home_menu();
