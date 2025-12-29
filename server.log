@@ -1,0 +1,67 @@
+[2025-12-29 08:29:32] [sockfd: 107] [return_code: 200] LOGIN
+[2025-12-29 08:29:36] [sockfd: 107] [return_code: 300] JOIN_ROOM
+[2025-12-29 08:29:57] [sockfd: 107] [return_code: 600] CREATE_ITEM item1 10000 100000
+[2025-12-29 08:58:19] [sockfd: 107] [return_code: 200] LOGIN
+[2025-12-29 08:58:22] [sockfd: 107] [return_code: 300] JOIN_ROOM
+[2025-12-29 08:58:24] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:02:22] [sockfd: 107] [return_code: 300] JOIN_ROOM
+[2025-12-29 09:02:32] [sockfd: 107] [return_code: 600] CREATE_ITEM rrrr 11111 1111111
+[2025-12-29 09:02:58] [sockfd: 108] [return_code: 200] LOGIN
+[2025-12-29 09:03:00] [sockfd: 108] [return_code: 000] LIST_ROOMS
+[2025-12-29 09:03:39] [sockfd: 108] [return_code: 300] JOIN_ROOM
+[2025-12-29 09:04:00] [sockfd: 108] [return_code: 800] BID
+[2025-12-29 09:15:00] [sockfd: 107] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:15:04] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:15:08] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:15:33] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:15:56] [sockfd: 108] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:15:59] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:16:02] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:17:38] [sockfd: 107] [return_code: 111] REGISTER vinh 123
+[2025-12-29 09:17:52] [sockfd: 107] [return_code: 100] REGISTER vinhle levinh
+[2025-12-29 09:18:01] [sockfd: 107] [return_code: 200] LOGIN vinhle levinh
+[2025-12-29 09:18:04] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:18:08] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:18:13] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:18:17] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:18:24] [sockfd: 107] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 09:18:27] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:21:39] [sockfd: 107] [return_code: 220] LOGOUT
+[2025-12-29 09:21:44] [sockfd: 107] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:21:49] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:22:05] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:22:32] [sockfd: 108] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:22:34] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:22:36] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:22:40] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:22:41] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:22:52] [sockfd: 107] [return_code: 211] LOGIN vih 123
+[2025-12-29 09:22:57] [sockfd: 107] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:23:00] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:23:02] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:31:24] [sockfd: 107] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 09:31:34] [sockfd: 108] [return_code: 200] LOGIN vinh 123
+[2025-12-29 09:31:38] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:31:40] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:31:43] [sockfd: 108] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 09:31:50] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 09:31:55] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:31:58] [sockfd: 108] [return_code: 220] LOGOUT
+[2025-12-29 09:32:06] [sockfd: 108] [return_code: 200] LOGIN vinhle levinh
+[2025-12-29 09:32:09] [sockfd: 108] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 09:32:11] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-29 10:37:44] [sockfd: 107] [return_code: 200] LOGIN vinh 123
+[2025-12-29 10:37:50] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 10:37:51] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 10:37:55] [sockfd: 107] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 10:37:59] [sockfd: 107] [return_code: 220] LOGOUT
+[2025-12-29 10:38:07] [sockfd: 107] [return_code: 200] LOGIN vinhle levinh
+[2025-12-29 10:38:13] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 10:38:21] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 10:39:27] [sockfd: 107] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 10:39:39] [sockfd: 107] [return_code: 550] LEAVE_ROOM
+[2025-12-29 10:40:04] [sockfd: 107] [return_code: 300] JOIN_ROOM room2
+[2025-12-29 10:40:08] [sockfd: 107] [return_code: 220] LOGOUT
+[2025-12-29 10:40:16] [sockfd: 107] [return_code: 200] LOGIN vinh 123
+[2025-12-29 10:40:20] [sockfd: 107] [return_code: 300] JOIN_ROOM room1
+[2025-12-29 10:40:30] [sockfd: 107] [return_code: 550] LEAVE_ROOM

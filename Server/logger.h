@@ -7,5 +7,6 @@
 // - Log auction
 // - Log buy/sell
 // - Log errors
+int print_log(char *message,int sockfd,int return_code);
 
 #endif

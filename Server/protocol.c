@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "auth.h"
 #include "room.h"
+#include "logger.h"
 // Helper function to send formatted response
 char *parse_response(int code){
     switch(code){
@@ -52,7 +53,8 @@ void send_response(int sockfd, int code) {
 
 void handle_client_message(char *message, int sockfd) {
     char command[50];
-    
+    char copy_message[BUFF_SIZE];
+    strcpy(copy_message, message);
     // Extract first word as command
     if (sscanf(message, "%49s", command) != 1) {
         send_response(sockfd, FORMAT_ERROR);
@@ -89,7 +91,7 @@ void handle_client_message(char *message, int sockfd) {
         send_response(sockfd, FORMAT_ERROR);
         return;
     }
-    
+    if(!print_log(copy_message, sockfd, result_code))printf("Logging failed for sockfd %d\n", sockfd);
     // Only send response if handler didn't already send one (result_code != 0)
     if (result_code != 0) {
         send_response(sockfd, result_code);

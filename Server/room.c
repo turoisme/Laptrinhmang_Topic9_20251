@@ -114,12 +114,11 @@ int handle_leave_room(char *message, int sockfd) {
 	if(!is_verified_user(sockfd, &account)){
 		return NOT_LOGGED_IN;
 	}
-
-	int param_count=parse_message(message, NULL);
+	char param[10][100];
+	int param_count=parse_message(message, param);
 	if(param_count!=1){
 		return FORMAT_ERROR;
 	}
-	
 	MYSQL* conn = db_get_connection();
 	if(!conn)return DATABASE_ERROR;
 	char query[512];
@@ -140,8 +139,7 @@ int handle_leave_room(char *message, int sockfd) {
 		return NOT_IN_ROOM;
 	}
 	int room_id = atoi(row[0]);
-	mysql_free_result(result);	
-	
+	mysql_free_result(result);
 	// Get username for notification
 	char username[100] = "";
 	sprintf(query, "SELECT username FROM users WHERE user_id='%d'", account);
