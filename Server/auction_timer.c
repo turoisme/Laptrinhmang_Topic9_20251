@@ -15,14 +15,12 @@ void* auction_timer_worker(void* arg) {
     printf("Auction timer thread started\n");
     
     while (timer_running) {
-        sleep(10);
-        
+        sleep(15);
         MYSQL *conn = db_get_connection();
         if (!conn) continue;
         
-        // Get all active items (not sold, not expired)
         char query[1024];
-        snprintf(query, sizeof(query),
+        snprintf(query, sizeof(query), //get active items
                  "SELECT i.item_id, i.item_name, i.room_id, "
                  "TIMESTAMPDIFF(SECOND, NOW(), i.expires_at) as remaining, "
                  "i.current_bidder_id, i.current_price, i.buy_now_price "
@@ -50,7 +48,6 @@ void* auction_timer_worker(void* arg) {
             int current_bidder_id = row[4] ? atoi(row[4]) : 0;
             double current_price = atof(row[5]);
             
-            // Send countdown for items under 180 seconds (every check)
             if (remaining > 0 && remaining <= 180) {
                 char msg[256];
                 if (current_bidder_id > 0) {
@@ -69,7 +66,7 @@ void* auction_timer_worker(void* arg) {
         mysql_free_result(result);
         db_release_connection(conn);
         
-        // Check for expired items (auction ended)
+        // Check for expired items
         conn = db_get_connection();
         if (!conn) continue;
         
@@ -99,7 +96,7 @@ void* auction_timer_worker(void* arg) {
             double final_price = atof(row[4]);
             char *winner_name = row[5];
             
-            // Mark as sold if there was a bidder
+            // mark as sold if there was a bidder
             if (winner_id > 0) {
                 char update[512];
                 snprintf(update, sizeof(update),
@@ -114,7 +111,7 @@ void* auction_timer_worker(void* arg) {
                 broadcast_to_room(room_id, -1, NOTIFY_AUCTION_END, msg);
                 printf("Auction ended: %s -> %s ($%.2f)\n", item_name, winner_name, final_price);
             } else {
-                // No bidders - delete the item
+                // delete item if no bids
                 char delete_query[512];
                 snprintf(delete_query, sizeof(delete_query),
                          "DELETE FROM items WHERE item_id = %d", item_id);

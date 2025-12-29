@@ -38,7 +38,7 @@
 #define ITEM_ALREADY_SOLD_BUY 912
 #define FORMAT_ERROR 921
 
-// Notification codes (1xxx range)
+// notification codes
 #define NOTIFY_BID 1000
 #define NOTIFY_BUY 1001
 #define NOTIFY_ITEM_CREATED 1002
@@ -48,7 +48,6 @@
 #define NOTIFY_USER_JOIN 1006
 #define NOTIFY_USER_LEAVE 1007
 
-// Function declarations
 void handle_client_message(char *message, int sockfd);
 int handle_create_item(char *message, int sockfd);
 int handle_delete_item(char *message, int sockfd);

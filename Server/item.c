@@ -30,7 +30,6 @@ int handle_create_item(char *message, int sockfd) {
 	                             (double)start_price, (double)buy_now_price);
 	
 	if (item_id > 0) {
-		// Broadcast item creation notification
 		MYSQL* conn = db_get_connection();
 		if (conn) {
 			char username[100] = "";

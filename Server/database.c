@@ -378,7 +378,6 @@ int db_item_create(const char *item_name, int room_id, int owner_id,
     MYSQL *conn = db_get_connection();
     if (!conn) return -1;
     
-    // Set expires_at to 3 minutes from now
     char query[512];
     snprintf(query, sizeof(query),
              "INSERT INTO items (item_name, room_id, owner_id, start_price, "
