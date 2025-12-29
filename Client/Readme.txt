@@ -204,7 +204,6 @@ Hàm chính:
   + While loop liên tục gọi receive_response()
   + Parse notification code
   + Nếu code >= 1000 && < 2000 → là notification
-  + Hiển thị với icon tương ứng (🔔💰✅📦🗑️⏰🏁👋)
   + In lại prompt "Enter choice: " để user biết vẫn có thể nhập
   + fflush(stdout) để hiển thị ngay
 

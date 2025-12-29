@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "auth.h"
 #include "room.h"
-// Helper function to send formatted response
+
 char *parse_response(int code){
     switch(code){
         case 000:return "Empty command";
@@ -89,29 +89,22 @@ void handle_client_message(char *message, int sockfd) {
         send_response(sockfd, FORMAT_ERROR);
         return;
     }
-    
-    // Only send response if handler didn't already send one (result_code != 0)
     if (result_code != 0) {
         send_response(sockfd, result_code);
     }
 }
 
-// Broadcast notification to all users in a room except sender
+// broadcast notification 
 void broadcast_to_room(int room_id, int sender_sockfd, int code, const char *message) {
     if (!message) return;
-    
     char notification[BUFF_SIZE];
     snprintf(notification, BUFF_SIZE, "%d %s", code, message);
-    
-    // Get all users in the room from database
     MYSQL *conn = db_get_connection();
     if (!conn) return;
-    
     char query[256];
     snprintf(query, sizeof(query),
              "SELECT user_id FROM room_members WHERE room_id = %d",
              room_id);
-    
     if (mysql_query(conn, query)) {
         db_release_connection(conn);
         return;
@@ -123,16 +116,12 @@ void broadcast_to_room(int room_id, int sender_sockfd, int code, const char *mes
         return;
     }
     
-    // Send notification to each user's socket
     MYSQL_ROW row;
     while ((row = mysql_fetch_row(result))) {
         int user_id = atoi(row[0]);
-        
-        // Find sockfd for this user_id
         for (int i = 0; i < 1024; i++) {
             if (verified[i] != -1 && verify_account[i] == user_id) {
                 int target_sockfd = verified[i];
-                // Don't send to sender
                 if (target_sockfd != sender_sockfd) {
                     send_message(target_sockfd, notification);
                     printf("Sent notification to sockfd %d: %s\n", target_sockfd, notification);

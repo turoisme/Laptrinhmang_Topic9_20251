@@ -171,7 +171,6 @@ int main(int argc, char *argv[]) {
                                 if (code == JOIN_OK) {
                                     is_in_room = 1;
                                     printf("You joined the room!\n");
-                                    // Start notification thread
                                     if (!is_notification_running()) {
                                         start_notification_thread(&conn);
                                         printf("[Notification system started]\n");

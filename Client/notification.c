@@ -13,7 +13,6 @@ void *notification_receiver(void *arg) {
     ClientConnection *conn = (ClientConnection *)arg;
     char *notification = NULL;
     while (thread_running && is_connected(conn)) {
-        // Receive notification from server
         int result = receive_response(conn, &notification);
         
         if (result <= 0) {
@@ -24,7 +23,6 @@ void *notification_receiver(void *arg) {
         char message[BUFF_SIZE];
         
         if (sscanf(notification, "%d %[^\n]", &code, message) >= 1) {
-            // Check if this is a notification (1xxx codes)
             if (code >= 1000 && code < 2000) {
                 printf("\n[NOTIFICATION] ");
                 
