@@ -237,10 +237,8 @@ int handle_bid(char *message, int sockfd) {
 		db_release_connection(conn);
 		return BID_TOO_LOW;
 	}
-	// Might need to do something if bid_price >= buy_now_price
-
-	// Update bid in database
-	sprintf(query, "UPDATE items SET current_price='%.2f', current_bidder_id='%d' WHERE item_id='%d'", bid_price, account, item_id);
+	// update bid and extend expires_at by 3 minutes
+	sprintf(query, "UPDATE items SET current_price='%.2f', current_bidder_id='%d', expires_at=DATE_ADD(NOW(), INTERVAL 3 MINUTE) WHERE item_id='%d'", bid_price, account, item_id);
 	if(mysql_query(conn,query)){
 		mysql_free_result(result);
 		db_release_connection(conn);

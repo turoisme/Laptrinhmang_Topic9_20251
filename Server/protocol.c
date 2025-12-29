@@ -91,11 +91,7 @@ void handle_client_message(char *message, int sockfd) {
         send_response(sockfd, FORMAT_ERROR);
         return;
     }
-<<<<<<< HEAD
     if(!print_log(copy_message, sockfd, result_code))printf("Logging failed for sockfd %d\n", sockfd);
-    // Only send response if handler didn't already send one (result_code != 0)
-=======
->>>>>>> baff1420dc86609ecf53e42508f347c3ae037681
     if (result_code != 0) {
         send_response(sockfd, result_code);
     }
