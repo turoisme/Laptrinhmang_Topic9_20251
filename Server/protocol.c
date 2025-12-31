@@ -89,7 +89,6 @@ void handle_client_message(char *message, int sockfd) {
         send_response(sockfd, FORMAT_ERROR);
         return;
     }
-    if(!print_log(copy_message, sockfd, result_code))printf("Logging failed for sockfd %d\n", sockfd);
     if (result_code != 0) {
         send_response(sockfd, result_code);
     }
