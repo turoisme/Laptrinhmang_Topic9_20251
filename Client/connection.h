@@ -1,6 +1,3 @@
-// connection.h - Server connection management
-// Handle client-side socket
-
 #ifndef CONNECTION_H
 #define CONNECTION_H
 

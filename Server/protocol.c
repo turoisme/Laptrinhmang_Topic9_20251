@@ -1,5 +1,3 @@
-// protocol.c - Protocol handler implementation
-
 #include "protocol.h"
 #include "socket_handler.h"
 #include "database.h"
@@ -91,6 +89,10 @@ void handle_client_message(char *message, int sockfd) {
         send_response(sockfd, FORMAT_ERROR);
         return;
     }
+<<<<<<< HEAD
+=======
+    if(!print_log(copy_message, sockfd, result_code))printf("Logging failed for sockfd %d\n", sockfd);
+>>>>>>> ee2af6aec056ff520d45bda722d5fecf4ae7aa74
     if (result_code != 0) {
         send_response(sockfd, result_code);
     }

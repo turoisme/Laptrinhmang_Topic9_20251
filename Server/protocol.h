@@ -1,11 +1,7 @@
-// protocol.h - Message protocol handler
-// Parse and process commands from client
-
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-// TODO: Define status codes
-// Response codes
+// return codes
 #define DATABASE_ERROR 000
 #define FUNCTION_IN_DEV 001
 #define SERVER_OVERLOAD 002

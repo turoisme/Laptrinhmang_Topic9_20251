@@ -1,17 +1,12 @@
-// logger.c - Logging implementation
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "logger.h"
 
-// TODO: Implement logging functions
-
 int print_log(char *message,int sockfd,int return_code){
     FILE *logger=fopen("server.log","a");
     if( logger==NULL)return 0;
-    printf("Logging: sockfd=%d, return_code=%d, message=%s\n", sockfd, return_code, message);
     char log[1000];
     time_t now;
     time(&now);

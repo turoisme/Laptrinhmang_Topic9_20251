@@ -1,6 +1,3 @@
-// item.h - Auction item management
-// Create, delete, list items, handle bidding
-
 #ifndef ITEM_H
 #define ITEM_H
 

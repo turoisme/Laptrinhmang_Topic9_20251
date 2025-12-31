@@ -1,5 +1,3 @@
-// thread_pool.c - Thread pool implementation
-
 #include "thread_pool.h"
 #include "protocol.h"
 #include "socket_handler.h"

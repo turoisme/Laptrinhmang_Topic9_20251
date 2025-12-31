@@ -15,7 +15,7 @@ void* auction_timer_worker(void* arg) {
     printf("Auction timer thread started\n");
     
     while (timer_running) {
-        sleep(15);
+        sleep(20); //check every 20 seconds
         MYSQL *conn = db_get_connection();
         if (!conn) continue;
         
@@ -66,11 +66,10 @@ void* auction_timer_worker(void* arg) {
         mysql_free_result(result);
         db_release_connection(conn);
         
-        // Check for expired items
         conn = db_get_connection();
         if (!conn) continue;
         
-        snprintf(query, sizeof(query),
+        snprintf(query, sizeof(query),//check if any items expired
                  "SELECT i.item_id, i.item_name, i.room_id, "
                  "i.current_bidder_id, i.current_price, u.username "
                  "FROM items i "

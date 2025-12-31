@@ -1,6 +1,3 @@
-// server.c - Server main file
-// Start server, listen for client connections
-
 #include "server.h"
 #include "socket_handler.h"
 #include "thread_pool.h"
