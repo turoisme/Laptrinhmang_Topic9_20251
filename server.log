@@ -99,3 +99,21 @@
 [2025-12-29 16:01:54] [sockfd: 108] [return_code: 300] JOIN_ROOM tan
 [2025-12-29 16:02:06] [sockfd: 108] [return_code: 800] BID chuot 30
 [2025-12-29 16:02:30] [sockfd: 108] [return_code: 800] BID maytinh1 50
+[2025-12-31 20:39:18] [sockfd: 107] [return_code: 200] LOGIN tan hihi
+[2025-12-31 20:39:20] [sockfd: 107] [return_code: 300] JOIN_ROOM tan
+[2025-12-31 20:39:29] [sockfd: 107] [return_code: 600] CREATE_ITEM laptop 200 2000
+[2025-12-31 20:40:37] [sockfd: 107] [return_code: 220] LOGOUT
+[2025-12-31 20:40:42] [sockfd: 107] [return_code: 200] LOGIN tan hihi
+[2025-12-31 20:40:44] [sockfd: 107] [return_code: 300] JOIN_ROOM tan
+[2025-12-31 20:41:03] [sockfd: 107] [return_code: 800] BID laptop 220
+[2025-12-31 20:47:22] [sockfd: 108] [return_code: 111] REGISTER tan hihi
+[2025-12-31 20:47:26] [sockfd: 108] [return_code: 200] LOGIN tan hihi
+[2025-12-31 20:47:47] [sockfd: 107] [return_code: 200] LOGIN tan hihi
+[2025-12-31 20:47:52] [sockfd: 107] [return_code: 300] JOIN_ROOM tan
+[2025-12-31 20:47:56] [sockfd: 108] [return_code: 411] CREATE_ROOM nam
+[2025-12-31 20:48:04] [sockfd: 108] [return_code: 300] JOIN_ROOM nam
+[2025-12-31 20:48:14] [sockfd: 108] [return_code: 000] JOIN_ROOM nam
+[2025-12-31 20:48:46] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-31 20:48:49] [sockfd: 108] [return_code: 300] JOIN_ROOM tan
+[2025-12-31 20:48:57] [sockfd: 108] [return_code: 550] LEAVE_ROOM
+[2025-12-31 20:49:02] [sockfd: 107] [return_code: 550] LEAVE_ROOM

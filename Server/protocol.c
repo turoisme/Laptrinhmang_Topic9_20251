@@ -1,5 +1,3 @@
-// protocol.c - Protocol handler implementation
-
 #include "protocol.h"
 #include "socket_handler.h"
 #include "database.h"

@@ -1,6 +1,3 @@
-// response_handler.h - Server response handler
-// Parse and display results
-
 #ifndef RESPONSE_HANDLER_H
 #define RESPONSE_HANDLER_H
 

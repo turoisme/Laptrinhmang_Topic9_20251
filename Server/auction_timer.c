@@ -15,7 +15,7 @@ void* auction_timer_worker(void* arg) {
     printf("Auction timer thread started\n");
     
     while (timer_running) {
-        sleep(15);
+        sleep(20); //check every 20 seconds
         MYSQL *conn = db_get_connection();
         if (!conn) continue;
         
