@@ -27,6 +27,16 @@ int is_verified_user(int sockfd,int *account) {
 	}
 	return 0;
 }
+
+int is_logged_in_elsewhere(int user_id){
+	int i=0;
+	for(i=0;i<1024;i++){
+		if(verify_account[i]==user_id){
+			return 1;
+		}
+	}
+	return 0;
+}
 // Find empty slot for new login
 int find_empty_slot() {
 	int i;
@@ -91,6 +101,9 @@ int handle_login(char *message, int sockfd) {
 	int user_id = atoi(row[0]);
 	mysql_free_result(result);
 	db_release_connection(conn);
+	if(is_logged_in_elsewhere(user_id)){
+		return ALREADY_LOGGED_IN;
+	}
 	// Assign to verified list
 	int slot=find_empty_slot();
 	if(slot<0)return SERVER_OVERLOAD;
